@@ -1,13 +1,61 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Nunito",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: "Nunito", sans-serif;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+a {
+  text-decoration: none;
+  display: inline-block;
+}
+a:hover {
+  text-decoration: none;
+}
+ul,
+ol {
+  padding: 0px;
+  list-style: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul,
+li,
+span,
+label {
+  margin-bottom: 0px;
+}
+html,
+body {
+  scroll-behavior: smooth;
+}
+button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+button:focus {
+  outline: none;
+}
+.rbc-date-cell {
+  text-align: center !important;
+}
+.rbc-row .rbc-now .rbc-button-link {
+  background-color: #ff5b57;
+  padding: 6px 7px;
+  border-radius: 27px;
+  color: white;
 }

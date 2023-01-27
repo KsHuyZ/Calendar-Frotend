@@ -1,0 +1,58 @@
+.modal-detail {
+  margin: 30vh auto;
+  background-color: white;
+  width: 36vw;
+  z-index: 21;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  padding: 20px;
+  .action-header {
+    color: #5f6368;
+    font-size: 22px;
+    display: flex;
+    justify-content: flex-end;
+
+    .left-side {
+      display: flex;
+      width: 30%;
+      justify-content: space-between;
+    }
+    .close-side {
+      padding-left: 3vw;
+    }
+  }
+  .content {
+    .row {
+      display: flex;
+
+      align-items: center;
+      justify-content: flex-start;
+      color: #3c4043;
+      padding: 2vh 0;
+
+      .background-color {
+        .color {
+          // background-color: red;
+          width: 1vw;
+          height: 2.1vh;
+          border-radius: 3px;
+        }
+      }
+      .title-day {
+        .title {
+          font-size: 25px;
+        }
+      }
+      .description {
+      }
+      svg {
+        cursor: pointer;
+        color: #5f6368;
+        font-size: 20px;
+      }
+      .right-side {
+        padding-left: 7vw;
+      }
+    }
+  }
+}

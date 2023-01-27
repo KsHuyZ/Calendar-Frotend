@@ -1,0 +1,130 @@
+@import "react-big-calendar/lib/sass/styles";
+@import "react-big-calendar/lib/addons/dragAndDrop/styles"; // if using DnD
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 5px 20px;
+  .left-side {
+    display: flex;
+    align-items: flex-end;
+    width: 36%;
+    .app-name {
+      padding-right: 2vw;
+      border-right: 1.5px solid #e7eaf8;
+      line-height: 4vh;
+
+      h1 {
+        margin: 0;
+      }
+    }
+    .col {
+      height: 20%;
+      width: 1px;
+      background-color: black;
+    }
+    .next-event {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      padding-left: 2vw;
+      color: #8792af;
+      p {
+        font-weight: bold;
+        padding-right: 6px;
+        color: #3e66ff;
+      }
+    }
+  }
+  .mid-side {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    .search {
+      width: 18vw;
+      position: relative;
+      input {
+        width: 100%;
+        border: 2px solid #f3f7f9;
+        border-radius: 10px;
+        padding: 15px 13px;
+        transition: 0.5s;
+        caret-color: #3c64ff;
+        &::placeholder {
+          color: #b5bfe6;
+        }
+        &:focus {
+          box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+          transition: 0.5s;
+        }
+      }
+      svg {
+        position: absolute;
+        top: 1vh;
+        left: 16vw;
+        background-color: #335dff;
+        color: white;
+        padding: 7px;
+        border-radius: 10px;
+        border: 2px solid #c6deff;
+        cursor: pointer;
+
+        // background-color: ;
+      }
+    }
+  }
+  .right-side {
+    width: 34%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .notification {
+      position: relative;
+      svg {
+        font-size: 25px;
+        color: #373740;
+        cursor: pointer;
+      }
+      .number {
+        position: absolute;
+        bottom: 13px;
+        left: 12px;
+        padding: 3px 6px;
+        background-color: #f35e5a;
+        border-radius: 50px;
+        color: white;
+        font-size: 8px;
+        font-weight: bold;
+      }
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      width: 50%;
+      justify-content: space-between;
+      .my-setting {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: flex-start;
+        font-weight: bold;
+        .setting {
+          font-size: 12px;
+          color: #919bb9;
+        }
+      }
+      .avatar {
+        width: 3vw;
+        img {
+          width: 100%;
+          border-radius: 50px;
+        }
+      }
+    }
+  }
+}
+
+.rbc-today {
+  background-color: transparent;
+}
