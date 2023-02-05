@@ -122,6 +122,100 @@
         }
       }
     }
+    .notify-list {
+      position: absolute;
+      top: 3em;
+      right: 2em;
+      background-color: white;
+      box-shadow: rgb(50 50 93 / 25%) 0px 13px 27px -5px,
+        rgb(0 0 0 / 30%) 0px 8px 16px -8px;
+      width: 21em;
+      border-radius: 7px;
+      z-index: 1;
+      transition: all 0.4s;
+      opacity: 0;
+      visibility: hidden;
+
+      &.show {
+        visibility: visible;
+        opacity: 1;
+      }
+      .notify-layout {
+        padding: 5px 10px 10px 10px;
+        display: flex;
+        flex-direction: column;
+        .all-unseen {
+          width: 40%;
+          display: flex;
+          justify-content: space-between;
+          .all {
+            cursor: pointer;
+          }
+          .unseen {
+            cursor: pointer;
+          }
+        }
+        .notifies-map {
+          .notify {
+            margin: 10px 0;
+            display: flex;
+            cursor: pointer;
+            padding: 10px;
+            align-items: flex-start;
+            border-radius: 5px;
+            &:hover {
+              background-color: #00000057;
+            }
+            .image-send {
+              width: 20%;
+              margin-right: 20px;
+              img {
+                width: 100%;
+                border-radius: 40px;
+              }
+            }
+            .notify-infor {
+              display: flex;
+              flex-direction: column;
+              .title-infor {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 3; /* number of lines to show */
+                line-clamp: 3;
+                -webkit-box-orient: vertical;
+              }
+              .time-past {
+                font-size: 12px;
+                color: #1876f2;
+              }
+              .action-btns {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+                .accept-btn {
+                  background-color: #335dff;
+                  padding: 10px 25px;
+                  border-radius: 8px;
+                  cursor: pointer;
+                  button {
+                    color: white;
+                    font-weight: 600;
+                    font-family: "Nunito", sans-serif;
+                  }
+                }
+                .denied-btn {
+                  padding: 10px 25px;
+                  border-radius: 8px;
+                  cursor: pointer;
+                  background-color: #e4e6eb;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 

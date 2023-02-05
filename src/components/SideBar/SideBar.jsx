@@ -38,7 +38,7 @@ const SideBar = () => {
   }, [user])
   return (
     <div className='sidebar'>
-      {showModal && <ModalShare />}
+      {showModal && <ModalShare close={() => setShowModal(false)} />}
       <div className="logo">
         <FcCalendar style={{ fontSize: 40 }} />
         <div>My Schedules</div>
@@ -57,17 +57,7 @@ const SideBar = () => {
             </div>
           </NavLink>
         ))}
-        <div className="item" onClick={() => setShowModal(!showModal)}>
-          <div className="item-content">
-            <div className="item-option">
-              <div className="title-item">
-                <TbShare />
-                <div>Share</div>
-              </div>
-              {/* <RiArrowDropDownFill className={`${scheduleClick ? "active" : ""}`} /> */}
-            </div>
-          </div>
-        </div>
+
 
         <div className="dropdown-item">
           <div className={`item ${scheduleClick ? "active" : ""}`} onClick={() => setScheduleClick(!scheduleClick)} >

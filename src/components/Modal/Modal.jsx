@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import "./modal.css"
+import "./modal.scss"
 import { RiCloseFill } from "react-icons/ri"
 import { AiOutlineClockCircle } from 'react-icons/ai'
 import { TbFileDescription } from "react-icons/tb"
@@ -15,12 +15,12 @@ const Modal = ({ add, close, start, end }) => {
   const titleRef = useRef()
   const colorRef = useRef()
   const [description, setDescription] = useState("")
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const title = titleRef.current.value
     const color = colorRef.current.value
-    const id = Math.random()
+
     if (title === "" || description === "") return
-    notifyPending("Saving...", "Saved", "Saving Error", add(id, title, color, description, start, end))
+    await add(title, color, description, start, end)
     close(false)
   }
 

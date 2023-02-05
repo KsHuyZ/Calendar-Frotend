@@ -59,3 +59,66 @@ button:focus {
   border-radius: 27px;
   color: white;
 }
+.css-195y93z-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+  background-color: #ff5b57 !important;
+}
+.css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+  background-color: #ff5b57 !important;
+}
+
+.MuiCalendarOrClockPicker-root,
+.MuiCalendarOrClockPicker-root > div {
+  width: 290px;
+}
+
+.MuiCalendarPicker-root {
+  width: 290px;
+}
+
+.MuiCalendarPicker-root > div:first-child {
+  padding-left: 12px;
+  padding-right: 8px;
+  margin-bottom: 0px;
+}
+
+.MuiCalendarPicker-root > div:first-child > div:last-child > div {
+  width: 4px;
+}
+
+.PrivatePickersSlideTransition-root {
+  min-height: 200px;
+}
+
+button.MuiPickersDay-root.Mui-selected {
+  width: 31px;
+  height: 31px;
+}
+.css-195y93z-MuiButtonBase-root-MuiPickersDay-root {
+  width: 31px;
+  height: 31px;
+}
+.css-169iwlq-MuiCalendarPicker-root {
+  width: 290px !important;
+}
+.css-dplwbx-MuiPickersCalendarHeader-label {
+  font-size: 0.9rem;
+  margin: 0;
+}
+.css-10fao8b-MuiPickersCalendarHeader-labelContainer {
+  /* margin-right: 69px !important; */
+}
+.css-195y93z-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) {
+  width: 31px;
+  height: 31px;
+}
+.MuiPickerStaticWrapper-content css-xelq0e-MuiPickerStaticWrapper-content {
+}
+.css-xelq0e-MuiPickerStaticWrapper-content {
+  min-width: 290px !important;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+}
+.css-9reuh9-MuiPickersArrowSwitcher-root {
+  border: 1px solid;
+  border-radius: 10px;
+}

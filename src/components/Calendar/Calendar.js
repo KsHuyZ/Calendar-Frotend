@@ -30,7 +30,7 @@ const Calendar = ({
 
   return (
     <DragAndDropCalendar
-      style={{ width: "80%" }}
+     
       {...{
         events,
         localizer,

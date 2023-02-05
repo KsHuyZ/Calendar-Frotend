@@ -9,6 +9,12 @@ export const scheduleApi = {
       return res.data;
     } catch (error) {
       console.log(error);
+      return false;
     }
+  },
+  userJointoSchedule: async (data) => {
+    try {
+      const res = await axios.post("/schedule/join-schedule", data);
+    } catch (error) {}
   },
 };

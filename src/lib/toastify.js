@@ -24,9 +24,26 @@ export const notfifyError = (msg) => {
   });
 };
 
-// const resolveAfter3Sec = new Promise((resolve) => setTimeout(resolve, 3000));
-export const notifyPending = (msg, msgSuccess, msgError, func) => {
-  toast.promise(func, {
+export const notifyInfor = (msg) => {
+  toast.info(msg, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+
+const resolveAfter3Sec = (state) => {
+  new Promise((resolve) => {
+    if (state) return resolve();
+  });
+};
+export const notifyPending = (msg, state, msgSuccess, msgError) => {
+  toast.promise(() => resolveAfter3Sec(state), {
     pending: msg,
     success: `${msgSuccess} 👌`,
     error: `${msgError} 🤯`,

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import socket from '../../config/socket'
 import { AuthContext } from '../../context/AuthProvider'
 
 const Dashboard = () => {

@@ -8,31 +8,13 @@ import { userApi } from '../../api/userApi'
 import { Skeleton } from '@mui/material';
 
 const ModalDetail = ({ close, event, dele }) => {
-  const { getUserbyId } = userApi
   const { _id, title, start, end, createdBy, description, backgroundColor } = event
-
-  const [userName, setUserName] = useState("")
-  const [loading, setLoading] = useState(false)
-
-  const handleGetUser = async () => {
-    setLoading(true)
-    try {
-      const userName = await getUserbyId(createdBy)
-      setUserName(userName.displayName)
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   const handleDelete = () => {
     close(false)
     dele(_id)
   }
 
-  useEffect(() => {
-    handleGetUser()
-  }, [event])
   return (
     <div className="background">
       <div className='modal-detail'>
@@ -46,7 +28,6 @@ const ModalDetail = ({ close, event, dele }) => {
           <div className="close-side" >
             <RiCloseFill onClick={() => close(false)} />
           </div>
-
         </div>
         <div className="content">
           <div className="row title">
@@ -65,7 +46,7 @@ const ModalDetail = ({ close, event, dele }) => {
           <div className="row owner">
             <TbCalendarEvent />
             <div className="right-side owner">
-              {!loading ? userName : <Skeleton width={100} />}
+              {createdBy.displayName}
             </div>
           </div>
 

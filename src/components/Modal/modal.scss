@@ -1,0 +1,87 @@
+.background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000000a1;
+  z-index: 20;
+  transition: 0.5s;
+  .modal {
+    margin: auto;
+    margin-top: 20vh;
+    background-color: white;
+    width: 36vw;
+    z-index: 21;
+    border-radius: 4px;
+    .button {
+      margin: 10px 20px;
+      display: flex;
+      justify-content: flex-end;
+      padding-bottom: 30px;
+      button {
+        background-color: #7dae7a;
+        padding: 15px;
+        border: none;
+        border-radius: 2px;
+        color: #f1f3f4;
+      }
+    }
+    .header {
+      background-color: #f1f3f4;
+      z-index: 22;
+      width: 100%;
+      height: 40px;
+      .close-btn {
+        height: 100%;
+        margin: 0 5px;
+      }
+      svg {
+        width: 25px;
+        display: flex;
+        margin-left: auto;
+        color: #5f6368;
+        height: 100%;
+        cursor: pointer;
+      }
+    }
+    .main-body {
+      margin: 20px;
+      .row {
+        display: flex;
+        margin: 0.5em 0;
+        align-items: center;
+        svg {
+          display: flex;
+          color: #5f6368;
+          font-size: 20px;
+        }
+      }
+      .title {
+        justify-content: flex-end;
+      }
+      .file .input-file {
+        width: 90%;
+        margin-left: 20px;
+        border: 1px solid #5f6368;
+        cursor: pointer;
+        position: relative;
+        .title {
+          position: absolute;
+          top: 0;
+          left: 10px;
+          color: #5f6368;
+        }
+        input {
+          width: 100%;
+          opacity: 0;
+        }
+      }
+    }
+  }
+}
+
+.ck-edit {
+  width: 90%;
+  margin-left: 20px;
+}

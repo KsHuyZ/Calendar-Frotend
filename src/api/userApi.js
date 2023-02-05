@@ -44,4 +44,12 @@ export const userApi = {
       console.log(error);
     }
   },
+  getUserListbyEmail: async (email) => {
+    try {
+      const res = await axios.get(`/user/find-email/${email}`);
+      return res.data.users;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

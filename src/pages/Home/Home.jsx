@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Calendar from "../../components/Calendar/Calendar";
 import Modal from "../../components/Modal/Modal";
 import { events as eventData } from "../../data/events";
@@ -9,13 +9,16 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { scheduleApi } from '../../api/scheduleApi';
 import { AuthContext } from '../../context/AuthProvider';
-import { useContext } from 'react';
-import { useEffect } from 'react';
-import { eventApi } from '../../api/eventApi';
-import { notifyPending } from '../../lib/toastify';
+import { useContext, useEffect } from 'react';
+import { notfifyError, notifyPending, notifySuccess } from '../../lib/toastify';
+import imageDenied from "../../assets/images/access-denied.svg"
 import ModalDetail from '../../components/ModalDetail/ModalDetail';
-import socket from '../../config/socket';
+// import socket from '../../config/socket';
 import { useParams } from 'react-router-dom';
+import "./home.scss"
+import { TbShare } from 'react-icons/tb';
+import ModalShare from '../../components/ModalShare/ModalShare';
+import { toast } from 'react-toastify';
 
 const now = () => new Date();
 
@@ -40,16 +43,19 @@ const Home = () => {
     const [event, setEvent] = useState({})
     const [showModal, setShowModal] = useState(false);
     const [showModalDetail, setShowModalDetail] = useState(false)
+    const [showModalShare, setShowModalShare] = useState(false)
     const [start, setStart] = useState();
     const [end, setEnd] = useState();
     const [date, setDate] = useState(now());
     const [view, setView] = useState("month");
-    const [idSchdule, setIdSchedule] = useState()
-    const { user, setProgress } = useContext(AuthContext)
-    const { getSchedulebyUser } = scheduleApi
-    const { createEvent, updateTimeEvent, deleteEvent } = eventApi
-
+    const [permission, setPermission] = useState(false)
+    const { user, setProgress, socket, progress } = useContext(AuthContext)
+    const { getSchedulebyUser, userJointoSchedule } = scheduleApi
     const { id } = useParams()
+    const toastId = useRef(null);
+
+    const notifyLoading = (msg) => toastId.current = toast.loading(msg)
+    const update = (msg, type) => toast.update(toastId.current, { render: msg, type: type, isLoading: false, autoClose: true, theme: 'dark', closeOnClick: true, closeButton: true });
 
     const handleGetMySchedule = async () => {
         setProgress(30)
@@ -57,27 +63,79 @@ const Home = () => {
         if (user.id) {
             try {
                 const res = await getSchedulebyUser(id, user.id, year)
-                setAllEvents(res.events)
-                socket.emit("join-schedule", res.id)
-                setIdSchedule(res.id)
-                setProgress(100)
+                if (res.success) {
+                    setPermission(true)
+                    setAllEvents(res.events)
+                    socket.emit("join-schedule", id)
+                    return setProgress(100)
+
+                }
+                setAllEvents([])
+                return setProgress(100)
             } catch (error) {
-                
+                setPermission(false)
+                setProgress(100)
             }
-      
         }
     }
 
-    const handleDeleteEvent = (id) => {
-        const oldEvent = allEvents.filter((event) => event._id === id)
+    const handleDeleteEvent = (idEvent) => {
+        const oldEvent = allEvents.filter((event) => event._id === idEvent)
         try {
-            const newEvents = allEvents.filter((event) => event._id !== id)
-            setAllEvents(newEvents)
-            notifyPending("Deleting", "Deleted", "Delete Error", deleteEvent(id))
+            socket.emit("delete-event", { idEvent, idSchedule: id })
+            notifyLoading("Deleting...")
         } catch (error) {
             setAllEvents(prev => prev.push(oldEvent))
         }
     }
+
+    const handleListenSocket = () => {
+        socket.on("create-event-error", () => {
+            notfifyError("Create error")
+        })
+    }
+
+
+    const handleAddNewEvent = async (
+        title,
+        backgroundColor,
+        description,
+        start,
+        end,
+    ) => {
+        const event = { title, idSchedule: id, backgroundColor, description, start, end, createdBy: user.id }
+        socket.emit("create-event", event)
+        notifyLoading("Creating...")
+    };
+
+    useEffect(() => {
+        socket.on("create-success", (event) => {
+            update("Created", "success")
+            setAllEvents((prev) => [...prev, event])
+
+        })
+
+        socket.on("delete-success", id => {
+            setAllEvents(pre => pre.filter((event) => event._id !== id))
+            update("Deleted", "success")
+        })
+
+        socket.on("update-success", () => {
+            update("Updated", "success")
+        })
+
+        socket.on("update-error", () => {
+            update("Update Error", "error")
+        })
+
+        return () => {
+            socket.off("create-success")
+            socket.off("delete-success")
+            socket.off('update-success')
+            socket.off("update-error")
+        }
+    }, [socket])
+
 
     useEffect(() => {
         handleGetMySchedule()
@@ -96,8 +154,8 @@ const Home = () => {
     const onView = (newView) => setView(newView);
 
     const eventStyleGetter = (event, start, end, isSelected) => {
-        var backgroundColor = event.backgroundColor;
-        const color = backgroundColor.startsWith("#f") ? "black" : "white"
+        var backgroundColor = event?.backgroundColor;
+        const color = backgroundColor?.startsWith("#f") ? "black" : "white"
 
         var style = {
             backgroundColor: backgroundColor,
@@ -140,18 +198,14 @@ const Home = () => {
         const eventIndex = allEvents.findIndex((e) => e._id === event._id)
         const lastEvent = allEvents[eventIndex]
         if (lastEvent.start === start.toISOString() && lastEvent.end === end.toISOString()) return
-        try {
-            setAllEvents((prevEvents) => {
-                const filtered = prevEvents.filter((it) => it._id !== event._id);
-                return [...filtered, updatedEvent];
-            });
-            notifyPending("Updating...", "Saved", "Update Error", updateTimeEvent(event._id, start, end))
-        } catch (error) {
-            setAllEvents((prevEvents) => {
-                const filtered = prevEvents.filter((it) => it._id !== event._id);
-                return [...filtered, lastEvent];
-            });
-        }
+        setEvent(event)
+        socket.emit("update-time", { startDay: start.toISOString(), endDay: end.toISOString(), id: event._id })
+        setAllEvents((prevEvents) => {
+            const filtered = prevEvents.filter((it) => it._id !== event._id);
+            return [...filtered, updatedEvent];
+        });
+        notifyLoading("Updating...")
+
     };
 
     const resizeEvent = ({ event, start, end }) => {
@@ -160,18 +214,12 @@ const Home = () => {
         const startDay = isIsoDate(start) ? start : start.toISOString()
         const endDay = isIsoDate(end) ? end : end.toISOString()
         if (lastEvent.start === startDay && lastEvent.end === endDay) return
-        try {
-            setAllEvents((prevEvents) => {
-                const filtered = prevEvents.filter((it) => it._id !== event._id);
-                return [...filtered, { ...event, start: startDay, end: endDay }];
-            });
-            notifyPending("Updating...", "Saved", "Update Error", updateTimeEvent(event._id, start, end))
-        } catch (error) {
-            setAllEvents((prevEvents) => {
-                const filtered = prevEvents.filter((it) => it._id !== event._id);
-                return [...filtered, lastEvent];
-            });
-        }
+        socket.emit("update-time", { startDay, endDay, id: event._id })
+        setAllEvents((prevEvents) => {
+            const filtered = prevEvents.filter((it) => it._id !== event._id);
+            return [...filtered, { ...event, start: startDay, end: endDay }];
+        });
+        notifyLoading("Updating...")
     };
 
     const onKeyPressEvent = ({ event, ...other }) => {
@@ -184,88 +232,87 @@ const Home = () => {
         if (id === 5) {
             return false;
         }
-        //console.log(`onDragStart: ${action}`, event);
+
     };
 
     const onSelecting = (range) => {
         console.log("[onSelecting] range: ", range);
     };
 
-    const handleAddNewEvent = async (
-        id,
-        title,
-        backgroundColor,
-        description,
-        start,
-        end,
-    ) => {
-        let allEventsTest = [...allEvents, { _id: id, title, idSchdule, backgroundColor, description, start, end, createdBy: user.id }]
-        setAllEvents(allEventsTest)
-        try {
-            await createEvent(title, idSchdule, backgroundColor, description, start, end, user.id).then(res => {
-                if (!res.success) {
-                    const array = allEventsTest.filter((event) => event._id !== id)
-                    return setAllEvents(array)
-                }
-                const eventIndex = allEventsTest.findIndex(event => event._id === id)
-                allEventsTest[eventIndex]._id = res.id
-                setAllEvents(allEventsTest)
-                return
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    };
-
-
     return (
-        <div style={{ height: "100vh", display: "flex" }}>
-            <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                style={{ width: "20%" }}
-            >
-                <StaticDatePicker
-                    displayStaticWrapperAs="desktop"
-                    openTo="day"
-                    value={date}
-                    onChange={(newValue) => {
-                        onNavigate(newValue)
-                    }}
-                    onMonthChange={(value) => onNavigate(value)
-
-                    }
-                    renderInput={(params) => <TextField {...params} />}
-                />
-            </LocalizationProvider>
+        <div className='home'>
             {showModal && (
-                <Modal
+                <Modal 
                     close={setShowModal}
                     start={start}
                     end={end}
                     add={handleAddNewEvent}
+        
                 />
             )}
+            {showModalShare && <ModalShare close={() => setShowModalShare(false)} />}
             {showModalDetail && <ModalDetail close={setShowModalDetail} event={event} dele={handleDeleteEvent} />}
-            <Calendar
-                {...{
-                    date,
-                    onNavigate,
-                    view,
-                    onView,
-                    onSelectSlot,
-                    onSelectEvent,
-                    onSelecting,
-                    onDoubleClickEvent,
-                    onKeyPressEvent,
-                }}
-                events={allEvents}
-                onEventDrop={moveEvent}
-                onEventResize={resizeEvent}
-                eventPropGetter={eventStyleGetter}
-                getNow={now}
-                {...accessors}
-                selectable="ignoreEvents"
-            />
+            {(progress === 0 || allEvents.length > 0) ?
+                permission ? (<>
+                    <Calendar
+                        style={{ width: "70%" }}
+                        {...{
+                            date,
+                            onNavigate,
+                            view,
+                            onView,
+                            onSelectSlot,
+                            onSelectEvent,
+                            onSelecting,
+                            onDoubleClickEvent,
+                            onKeyPressEvent,
+                        }}
+                        events={allEvents}
+                        onEventDrop={moveEvent}
+                        onEventResize={resizeEvent}
+                        eventPropGetter={eventStyleGetter}
+                        getNow={now}
+                        {...accessors}
+                        selectable="ignoreEvents"
+                    />
+                    <div className="right-side">
+                        <div className="calendar-date" >
+                            <LocalizationProvider
+                                dateAdapter={AdapterDayjs}
+                            >
+                                <StaticDatePicker
+                                    displayStaticWrapperAs="desktop"
+                                    openTo="day"
+                                    value={date}
+                                    onChange={(newValue) => {
+                                        onNavigate(newValue)
+                                    }}
+                                    onMonthChange={(value) => onNavigate(value)
+                                    }
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
+
+                        </div>
+                        <div className="item" onClick={() => setShowModalShare(!showModalShare)}>
+                            <div className="item-content">
+                                <div className="item-option">
+                                    <div className="title-item">
+                                        <TbShare />
+                                        <div>Share for user</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>) : (
+                    <div className="access-denied">
+                        <img src={imageDenied} alt="" />
+                        <p>You haven't permission</p>
+                    </div>
+                )
+                : ""
+            }
         </div>
 
     )
