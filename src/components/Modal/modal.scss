@@ -6,14 +6,39 @@
   left: 0;
   background-color: #000000a1;
   z-index: 20;
-  transition: 0.5s;
+  visibility: hidden;
+
+  &.show {
+    visibility: visible;
+  }
+  .map {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 30;
+  }
   .modal {
-    margin: auto;
-    margin-top: 20vh;
+    position: fixed;
+    top: 10%;
+    left: 30%;
     background-color: white;
     width: 36vw;
     z-index: 21;
     border-radius: 4px;
+    transition: 0.1s;
+    transform: scale(0.7);
+    visibility: hidden;
+    opacity: 0;
+    &.show {
+      transition: 0.3s;
+      transform: scale(1);
+      visibility: visible;
+      opacity: 1;
+    }
+    // &.show-map {
+    //   // transition: 5s;
+    //   margin-left: 30px;
+    // }
     .button {
       margin: 10px 20px;
       display: flex;
@@ -55,6 +80,29 @@
           display: flex;
           color: #5f6368;
           font-size: 20px;
+        }
+        &.location {
+          position: relative;
+          .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 7%;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
+            z-index: 23;
+            width: 100%;
+            .dropdown-row {
+              padding: 10px;
+              cursor: pointer;
+              display: flex;
+              .location {
+                padding-left: 10px;
+              }
+            }
+          }
         }
       }
       .title {

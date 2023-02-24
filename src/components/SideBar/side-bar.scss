@@ -72,7 +72,7 @@
       .content {
         width: 90%;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-start;
         margin: 3px;
         border-radius: 7px;
         padding: 7px 0px;
@@ -87,6 +87,7 @@
         }
         .schedule-img {
           width: 15%;
+          margin-right: 13px;
           img {
             width: 100%;
             border-radius: 20px;

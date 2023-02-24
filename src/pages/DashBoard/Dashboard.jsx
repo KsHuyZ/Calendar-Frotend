@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import socket from '../../config/socket'
 import { AuthContext } from '../../context/AuthProvider'
+import { Map } from '../../services/goong'
 
 const Dashboard = () => {
     const { setProgress } = useContext(AuthContext)
@@ -9,7 +10,7 @@ const Dashboard = () => {
     }, [])
     return (
         <div style={{ textAlign: 'center' }}>
-            <h1>This is Dashboard page</h1>
+           {/* <Map /> */}
         </div>
     )
 }

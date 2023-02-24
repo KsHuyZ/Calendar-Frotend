@@ -49,3 +49,13 @@ export const notifyPending = (msg, state, msgSuccess, msgError) => {
     error: `${msgError} 🤯`,
   });
 };
+
+export const notifyOffline = () => {
+  toast.error("You are offline", {
+    position: "bottom-left",
+    hideProgressBar: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};

@@ -6,6 +6,7 @@ import LoadingBar from "react-top-loading-bar";
 // import socket from "../config/socket";
 import io from "socket.io-client";
 import { serverHost } from "../config/serverHost";
+import { notfifyError, notifyOffline, notifySuccess } from "../lib/toastify";
 
 const Socket = io.connect(serverHost.local);
 
@@ -15,9 +16,37 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState({});
   const [progress, setProgress] = useState(0);
   const [socket, setSocket] = useState(Socket);
+  const [status, setStatus] = useState(window.navigator.onLine);
   const { getUserbyEmail } = userApi;
   const auth = getAuth();
   const navigate = useNavigate();
+
+  const handleCheckInternetStatus = async () => {
+    try {
+      const online = await fetch(
+        "https://jsonplaceholder.typicode.com/todos/1"
+      );
+      if (online.status >= 200 && online.status < 300) {
+        if (!status) {
+          setStatus(true);
+          return notifySuccess("Online");
+        }
+      } // either true or false
+    } catch (err) {
+      if (status) {
+        notifyOffline();
+        return setStatus(false);
+      }
+
+      // definitely offline
+    }
+  };
+
+  useEffect(() => {
+    if (!Socket.connected) {
+      handleCheckInternetStatus();
+    }
+  }, [Socket]);
 
   useEffect(() => {
     const unsubcribed = auth.onIdTokenChanged(async (user) => {
@@ -47,7 +76,15 @@ export default function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, setProgress, socket, progress }}
+      value={{
+        user,
+        setUser,
+        setProgress,
+        socket,
+        progress,
+        handleCheckInternetStatus,
+        status,
+      }}
     >
       <LoadingBar
         color="#f11946"

@@ -1,15 +1,12 @@
 import React, { useContext, useState } from 'react'
 import Checkbox from '@mui/material/Checkbox';
 import "./modal-share.scss"
-import { useParams } from 'react-router-dom';
 import { userApi } from '../../api/userApi';
-import { scheduleApi } from '../../api/scheduleApi';
 import { AuthContext } from '../../context/AuthProvider';
 import { notifyInfor } from '../../lib/toastify';
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-const ModalShare = ({ close }) => {
-    const { id } = useParams()
+const ModalShare = ({ close, show, type, event }) => {
     const [users, setUsers] = useState([])
     const [value, setValue] = useState("")
     const [usersSelected, setUsersSelected] = useState([])
@@ -42,7 +39,14 @@ const ModalShare = ({ close }) => {
         const users = usersSelected.map(user => user._id)
         socket.emit("invite-join", { users, permissions: permission })
         notifyInfor("Your invitation has been sent")
-        // await userJointoSchedule({ users, idSchedule: id, user: user.id, permissions: permission })
+        close()
+    }
+
+    const handleInvitedAttend = async () => {
+        const users = usersSelected.map(user => user._id)
+        socket.emit("attend-event", { users, event })
+        notifyInfor("Your invitation has been sent")
+        close()
     }
 
     const handleOnChangePermission = (data) => {
@@ -58,16 +62,26 @@ const ModalShare = ({ close }) => {
         })
     }
 
+    const handleClose = () => {
+        setPermission({
+            "view": true,
+            "update": false,
+            "share": false
+        })
+        setUsersSelected([])
+        close()
+    }
+
     return (
-        <div className='background'>
-            <div className="modal-share">
+        <div className={`background ${show ? "show" : ""}`}>
+            <div className={`modal-share ${show ? "show" : ""}`}>
                 <h3 className="header">
                     <span>Share</span>
                 </h3>
                 <div className="body">
                     <div className="email">
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Email</label>
+                        <div className="form-group">
+                            <label htmlFor="exampleInputPassword1">Email</label>
                             <div className="tags-input-container">
                                 {usersSelected.map((permission, index) => (
                                     <div className="tag-item" key={index}>
@@ -76,7 +90,7 @@ const ModalShare = ({ close }) => {
                                         <span className="close" onClick={() => handleDeletePermission(permission)}>&times;</span>
                                     </div>
                                 ))}
-                                <input type="text" className="tags-input" placeholder="Type somthing" onChange={(e) => handleChangeInput(e.target.value)} value={value} />
+                                <input type="text" className="tags-input" placeholder="Enter email" onChange={(e) => handleChangeInput(e.target.value)} value={value} />
                             </div>
                             <div className="dropdown">
                                 {users.filter((item) => {
@@ -115,7 +129,7 @@ const ModalShare = ({ close }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="options">
+                    {type === "permission" ? <div className="options">
                         <div className="view option">
                             <div>View</div>
                             <Checkbox {...label} checked={permission.view} onChange={() => handleOnChangePermission("view")} />
@@ -128,14 +142,14 @@ const ModalShare = ({ close }) => {
                             <div>Share</div>
                             <Checkbox {...label} checked={permission.share} onChange={() => handleOnChangePermission("share")} />
                         </div>
-                    </div>
+                    </div> : null}
                 </div>
 
                 <div className="footer">
-                    <div className="cancel" onClick={close}>
+                    <div className="cancel" onClick={handleClose}>
                         <span>Cancel</span>
                     </div>
-                    <div className="send" onClick={permission.view && handleAddUserToSchedule}>
+                    <div className="send" onClick={(permission.view && usersSelected.length > 0) ? (type === "permission" ? handleAddUserToSchedule : handleInvitedAttend) : null}>
                         <span className={`${(!permission.view || usersSelected.length === 0) && "disabled"}`}>Send</span>
                     </div>
                 </div>

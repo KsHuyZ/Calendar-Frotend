@@ -119,6 +119,6 @@ button.MuiPickersDay-root.Mui-selected {
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
 }
 .css-9reuh9-MuiPickersArrowSwitcher-root {
-  border: 1px solid;
-  border-radius: 10px;
+  /* border: 1px solid;
+  border-radius: 10px; */
 }

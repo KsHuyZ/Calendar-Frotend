@@ -9,35 +9,78 @@ import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { notifyPending } from "../../lib/toastify";
-
-const Modal = ({ add, close, start, end }) => {
+import { FaMapMarkerAlt } from "react-icons/fa"
+import { Map } from "../../services/goong"
+import axios from "axios";
+const Modal = ({ add, close, start, end, show }) => {
+  const apiKey = "oC8CNdh20xrH8Dpm0SIkZYQqBijW847QWVmBE0DB"
   const titleRef = useRef()
   const colorRef = useRef()
   const [description, setDescription] = useState("")
+  const [showMap, setShowMap] = useState(false)
+  const [location, setLocation] = useState({
+    lat: 21.0520876,
+    lng: 105.8065815
+  })
+  const [currentLocation, setCurrentLocation] = useState("")
+  const [suggests, setSuggests] = useState([])
   const handleSubmit = async () => {
     const title = titleRef.current.value
     const color = colorRef.current.value
 
     if (title === "" || description === "") return
-    await add(title, color, description, start, end)
+    const locationObject = {
+      address: currentLocation, latitude: location.lat, longitude: location.lng
+    }
+    await add(title, color, description, start, end, locationObject)
     close(false)
+    setShowMap(false)
+    handleCloseModal()
   }
 
+  const handleShowSuggest = async (e) => {
+    const value = e.target.value
+    setCurrentLocation(value)
+    if (value.length > 2) {
+      const res = await axios.get(`https://rsapi.goong.io/Place/AutoComplete?input=${value}&api_key=${apiKey}`)
+      setSuggests(res.data.predictions)
+
+    }
 
 
-  return <div className="background" >
-    <div className="modal">
+  }
+
+  const handleSetLocation = async (value) => {
+    const res = await axios.get(`https://rsapi.goong.io/Place/Detail?placeid=${value}&api_key=${apiKey}`)
+    setLocation(res.data.result.geometry.location)
+    setCurrentLocation(res.data.result["formatted_address"])
+    setSuggests([])
+  }
+
+  const handleCloseModal = async () => {
+    close(false)
+    setShowMap(false)
+    setCurrentLocation("")
+    titleRef.current.value = ""
+    colorRef.current.value = "#3174ad"
+    setDescription("")
+
+  }
+
+  // console.log(handleSetLocation())
+  return <div className={`background ${show ? "show" : ""}`} >
+    <div className="map">
+      {showMap ? <Map long={location.lng} lat={location.lat} /> : ""}
+    </div>
+    <div className={`modal ${show ? "show" : ""}`} style={showMap ? { left: "5%" } : null}>
       <div className="header">
         <div className="close-btn" >
-          <RiCloseFill onClick={() => close(false)} />
+          <RiCloseFill onClick={handleCloseModal} />
         </div>
       </div>
       <div className="main-body">
         <div className="title row">
-          <TextField id="standard-basic" label="Event title" variant="standard" style={{ width: "90%" }} inputRef={titleRef} autoFocus={() => {
-            setTimeout(() => true, 1000)
-          }} />
+          <TextField id="standard-basic" label="Event title" variant="standard" style={{ width: "90%" }} inputRef={titleRef} autoFocus={show} />
         </div>
         <div className="time row">
           < AiOutlineClockCircle />
@@ -55,18 +98,18 @@ const Modal = ({ add, close, start, end }) => {
               data={description}
               onReady={editor => {
                 // You can store the "editor" and use when it is needed.
-                console.log('Editor is ready to use!', editor);
+                // console.log('Editor is ready to use!', editor);
               }}
               onChange={(event, editor) => {
                 const data = editor.getData();
                 setDescription(data)
-                console.log({ event, editor, data });
+                // console.log({ event, editor, data });
               }}
               onBlur={(event, editor) => {
-                console.log('Blur.', editor);
+                // console.log('Blur.', editor);
               }}
               onFocus={(event, editor) => {
-                console.log('Focus.', editor);
+                // console.log('Focus.', editor);
               }}
             />
           </div>
@@ -82,6 +125,28 @@ const Modal = ({ add, close, start, end }) => {
         <div className="color row">
           <IoColorPaletteOutline />
           <input type="color" name="" id="" style={{ width: "90%", marginLeft: 20 }} ref={colorRef} defaultValue="#3174ad" />
+        </div>
+        <div className="location row">
+          <FaMapMarkerAlt />
+
+          <TextField id="filled-basic" label="Location" variant="filled" fullWidth style={{ marginLeft: 13 }} size={"small"} onFocus={() => setShowMap(true)} onBlur={() => {
+            if (location.length > 0) {
+              setShowMap(false)
+            }
+          }} onChange={handleShowSuggest} value={currentLocation} />
+          <div className="dropdown">
+            {suggests.map(suggest => (
+              <div className="dropdown-row" onClick={() => handleSetLocation(suggest["place_id"])}>
+
+                <div className="icon-mark">
+                  <FaMapMarkerAlt />
+                </div>
+                <div className="location">{suggest.description}</div>
+              </div>
+            ))}
+          </div>
+
+
         </div>
       </div>
 

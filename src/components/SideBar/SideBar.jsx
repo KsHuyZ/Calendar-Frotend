@@ -7,8 +7,6 @@ import { useState } from 'react'
 import { userApi } from '../../api/userApi'
 import { AuthContext } from '../../context/AuthProvider'
 import { Link, NavLink } from 'react-router-dom'
-import { Modal } from '@mui/material'
-import ModalShare from '../ModalShare/ModalShare'
 
 const NAV__LINKS = [
   {
@@ -24,21 +22,29 @@ const NAV__LINKS = [
 const SideBar = () => {
   const [scheduleClick, setScheduleClick] = useState(false)
   const [schedules, setSchedules] = useState()
-  const [showModal, setShowModal] = useState(false)
-  const { user } = useContext(AuthContext)
+  const { user, socket } = useContext(AuthContext)
   const { getSchedudulesbyUserId } = userApi
 
-  const handleGetSchduleList = async () => {
-    const schdeules = await getSchedudulesbyUserId(user.id)
+  const handleGetSchduleList = async (id) => {
+    const schdeules = await getSchedudulesbyUserId(id)
     setSchedules(schdeules)
   }
 
   useEffect(() => {
-    if (user.id) handleGetSchduleList()
+    socket.on("accept-success", ({ id, idUser }) => {
+      // console.log("accept-success", idUser)
+      handleGetSchduleList(idUser)
+    })
+
+    return () => socket.off("accept-success")
+  }, [socket])
+
+  useEffect(() => {
+    if (user.id) handleGetSchduleList(user.id)
   }, [user])
+
   return (
     <div className='sidebar'>
-      {showModal && <ModalShare close={() => setShowModal(false)} />}
       <div className="logo">
         <FcCalendar style={{ fontSize: 40 }} />
         <div>My Schedules</div>
@@ -52,7 +58,6 @@ const SideBar = () => {
                   {item.icon}
                   <div>{item.display}</div>
                 </div>
-                {/* <RiArrowDropDownFill className={`${scheduleClick ? "active" : ""}`} /> */}
               </div>
             </div>
           </NavLink>
@@ -79,7 +84,7 @@ const SideBar = () => {
                   <img src={schedule.idOwner.photoURL} alt="" />
                 </div>
                 <div className="schedule-name">
-                  <div>{schedules?.email === schedule.idOwner.email ? "My" : schedule.idOwner.displayName.split("")[0]} Schedule</div>
+                  <div>{schedules?.email === schedule.idOwner.email ? "My" : `${schedule.idOwner.displayName.split(" ")[0]}'s`} Schedule</div>
                 </div>
               </Link>
             ))}

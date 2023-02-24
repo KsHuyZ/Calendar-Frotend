@@ -11,10 +11,7 @@
     align-items: flex-end;
     width: 36%;
     .app-name {
-      padding-right: 2vw;
-      border-right: 1.5px solid #e7eaf8;
-      line-height: 4vh;
-
+   
       h1 {
         margin: 0;
       }
@@ -188,11 +185,18 @@
               .time-past {
                 font-size: 12px;
                 color: #1876f2;
+                &.seen {
+                  color: #65676b;
+                }
               }
               .action-btns {
                 display: flex;
                 justify-content: space-between;
                 margin-top: 8px;
+                .check-accept {
+                  font-size: 13px;
+                  color: #65676b;
+                }
                 .accept-btn {
                   background-color: #335dff;
                   padding: 10px 25px;
@@ -211,6 +215,12 @@
                   background-color: #e4e6eb;
                 }
               }
+            }
+            .new-notify {
+              width: 14px;
+              height: 10px;
+              background-color: #1876f2;
+              border-radius: 20px;
             }
           }
         }

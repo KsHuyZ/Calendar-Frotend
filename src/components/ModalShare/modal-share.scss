@@ -2,9 +2,19 @@
   margin: 30vh auto;
   background-color: white;
   width: 36vw;
-  z-index: 21;
+  z-index: 23;
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  transition: 0.1s;
+  transform: scale(0.7);
+  visibility: hidden;
+  opacity: 0;
+  &.show {
+    transition: 0.3s;
+    transform: scale(1);
+    visibility: visible;
+    opacity: 1;
+  }
   .header {
     width: 100%;
     padding: 10px 0;
@@ -20,6 +30,7 @@
       .form-group {
         position: relative;
         .tags-input-container {
+          background-color: #f1f3f4;
           border: 1px solid #ced4da;
           padding: 0.5em 0 0.5em 0.5em;
           border-radius: 3px;
@@ -61,6 +72,9 @@
             padding: 0.5em 0;
             border: none;
             outline: none;
+            &::placeholder {
+              color: #5f6368;
+            }
           }
         }
         .dropdown {

@@ -6,6 +6,16 @@
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
   padding: 20px;
+  transition: 0.1s;
+  transform: scale(0.7);
+  visibility: hidden;
+  opacity: 0;
+  &.show {
+    transition: 0.3s;
+    transform: scale(1);
+    visibility: visible;
+    opacity: 1;
+  }
   .action-header {
     color: #5f6368;
     font-size: 22px;
@@ -16,9 +26,30 @@
       display: flex;
       width: 30%;
       justify-content: space-between;
+      .more {
+        position: relative;
+        .options {
+          position: absolute;
+          top: 30px;
+          left: 0;
+          border-radius: 3px;
+          background-color: white;
+          width: 75px;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+            rgba(0, 0, 0, 0.23) 0px 3px 6px;
+          .option {
+            height: auto;
+            text-align: center;
+            font-size: 15px;
+            padding: 5px;
+            cursor: pointer;
+          }
+        }
+      }
     }
     .close-side {
       padding-left: 3vw;
+      cursor: pointer;
     }
   }
   .content {
@@ -52,6 +83,7 @@
       }
       .right-side {
         padding-left: 7vw;
+        background-color: white;
       }
     }
   }

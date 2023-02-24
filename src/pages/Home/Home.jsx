@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
 import Calendar from "../../components/Calendar/Calendar";
 import Modal from "../../components/Modal/Modal";
-import { events as eventData } from "../../data/events";
 import dayjs, { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -19,7 +18,7 @@ import "./home.scss"
 import { TbShare } from 'react-icons/tb';
 import ModalShare from '../../components/ModalShare/ModalShare';
 import { toast } from 'react-toastify';
-
+import { Map } from '../../services/goong';
 const now = () => new Date();
 
 function isEmpty(obj) {
@@ -49,13 +48,15 @@ const Home = () => {
     const [date, setDate] = useState(now());
     const [view, setView] = useState("month");
     const [permission, setPermission] = useState(false)
-    const { user, setProgress, socket, progress } = useContext(AuthContext)
-    const { getSchedulebyUser, userJointoSchedule } = scheduleApi
+    const { user, setProgress, socket } = useContext(AuthContext)
+    const { getSchedulebyUser } = scheduleApi
+    const [loaded, setLoaded] = useState(false)
     const { id } = useParams()
+
     const toastId = useRef(null);
 
     const notifyLoading = (msg) => toastId.current = toast.loading(msg)
-    const update = (msg, type) => toast.update(toastId.current, { render: msg, type: type, isLoading: false, autoClose: true, theme: 'dark', closeOnClick: true, closeButton: true });
+    const update = (msg, type) => toast.update(toastId.current, { render: msg, type: type, isLoading: false, autoClose: true, closeOnClick: true, closeButton: true });
 
     const handleGetMySchedule = async () => {
         setProgress(30)
@@ -63,10 +64,12 @@ const Home = () => {
         if (user.id) {
             try {
                 const res = await getSchedulebyUser(id, user.id, year)
+                console.log(res.events)
                 if (res.success) {
                     setPermission(true)
                     setAllEvents(res.events)
                     socket.emit("join-schedule", id)
+                    setLoaded(true)
                     return setProgress(100)
 
                 }
@@ -76,7 +79,9 @@ const Home = () => {
                 setPermission(false)
                 setProgress(100)
             }
+
         }
+
     }
 
     const handleDeleteEvent = (idEvent) => {
@@ -102,8 +107,9 @@ const Home = () => {
         description,
         start,
         end,
+        location
     ) => {
-        const event = { title, idSchedule: id, backgroundColor, description, start, end, createdBy: user.id }
+        const event = { title, idSchedule: id, backgroundColor, description, start, end, createdBy: user.id, location }
         socket.emit("create-event", event)
         notifyLoading("Creating...")
     };
@@ -139,7 +145,7 @@ const Home = () => {
 
     useEffect(() => {
         handleGetMySchedule()
-    }, [user])
+    }, [user, id])
 
     const onNavigate = (newDate) => {
         const newValue = dayjs(newDate).toDate()
@@ -170,6 +176,8 @@ const Home = () => {
     const accessors = {
         draggableAccessor: (event) => !event.blocked,
         resizableAccessor: (event) => !event.blocked,
+        startAccessor: (event) => new Date(event.start),
+        endAccessor: (event) => new Date(event.end)
     };
 
     const onSelectSlot = ({ start, end, action }) => {
@@ -241,18 +249,17 @@ const Home = () => {
 
     return (
         <div className='home'>
-            {showModal && (
-                <Modal 
-                    close={setShowModal}
-                    start={start}
-                    end={end}
-                    add={handleAddNewEvent}
-        
-                />
-            )}
-            {showModalShare && <ModalShare close={() => setShowModalShare(false)} />}
-            {showModalDetail && <ModalDetail close={setShowModalDetail} event={event} dele={handleDeleteEvent} />}
-            {(progress === 0 || allEvents.length > 0) ?
+            <Modal
+                close={setShowModal}
+                start={start}
+                end={end}
+                add={handleAddNewEvent}
+                show={showModal}
+            />
+
+            <ModalShare close={() => setShowModalShare(false)} show={showModalShare} type="permission" />
+            <ModalDetail close={setShowModalDetail} event={event} dele={handleDeleteEvent} show={showModalDetail} />
+            {loaded ?
                 permission ? (<>
                     <Calendar
                         style={{ width: "70%" }}
