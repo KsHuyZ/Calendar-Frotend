@@ -8,7 +8,7 @@ import io from "socket.io-client";
 import { serverHost } from "../config/serverHost";
 import { notfifyError, notifyOffline, notifySuccess } from "../lib/toastify";
 
-const Socket = io.connect(serverHost.local);
+const Socket = io.connect(serverHost.product);
 
 export const AuthContext = createContext();
 

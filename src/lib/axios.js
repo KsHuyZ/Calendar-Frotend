@@ -2,7 +2,7 @@ import Axios from "axios";
 import { serverHost } from "../config/serverHost";
 
 const axios = Axios.create({
-  baseURL: serverHost.local,
+  baseURL: serverHost.product,
   headers: {
     "X-Requested-With": "XMLHttpRequest",
   },
