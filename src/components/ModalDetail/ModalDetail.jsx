@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { BiPencil } from "react-icons/bi"
 import { RiMore2Line, RiCloseFill } from "react-icons/ri"
 import { IoTrashOutline } from "react-icons/io5"
@@ -6,12 +6,19 @@ import "./modal-detail.scss"
 import { TbFileDescription, TbCalendarEvent } from 'react-icons/tb'
 import { FaMapMarkerAlt } from "react-icons/fa"
 import { VscFilePdf } from "react-icons/vsc"
+import { AiOutlineTeam } from "react-icons/ai"
 import ModalShare from '../ModalShare/ModalShare'
+import { Map } from '../../services/goong'
+import ModalDelete from '../ModalDelete/ModalDelete'
 
 const ModalDetail = ({ close, event, dele, show }) => {
-  const { _id, title, start, end, createdBy, description, backgroundColor, location } = event
+  const { _id, title, start, end, createdBy, description, backgroundColor, location, userJoin } = event
   const [showOption, setShowOption] = useState(false)
-  const [showModalShare, setShowModalShare] = useState(false)
+  const [showModal, setShowModal] = useState({
+    modalShare: false,
+    modalDelete: false
+  })
+  // const [showMap, setShowMap] = useState(false)
   const handleDelete = () => {
     close(false)
     dele(_id)
@@ -20,21 +27,25 @@ const ModalDetail = ({ close, event, dele, show }) => {
 
 
   return (
-    <div className={`background ${show ? "show" : ""}`}>
-      <ModalShare close={() => setShowModalShare(false)} show={showModalShare} type="event" event={_id} />
-      <div className={`modal-detail ${show ? "show" : ""}`}>
+    <div className={`background ${show ? "show" : ""}`} >
+      <div className="map">
+        {location ? <Map long={location.longitude} lat={location.latitude} /> : ""}
+      </div>
+      <ModalDelete show={showModal.modalDelete} name={title} close={() => setShowModal(prev => ({ ...prev, modalDelete: false }))} dele={handleDelete} />
+      <ModalShare close={() => setShowModal(prev => ({ ...prev, modalShare: false }))} show={showModal.modalShare} type="event" event={_id} />
+      <div className={`modal-detail ${show ? "show" : ""}`} style={location ? { marginLeft: "5%" } : null}>
         <div className="action-header">
-          <div className="left-side">
+          {dele && <div className="left-side">
             <BiPencil />
             <div className="more" onClick={() => setShowOption(prev => !prev)}>
               <RiMore2Line style={{ cursor: 'pointer' }} />
               {showOption && <div className="options">
-                <div className="option" onClick={() => setShowModalShare(true)}>Share</div>
+                <div className="option" onClick={() => setShowModal(prev => ({ ...prev, modalShare: true }))}>Share</div>
               </div>}
             </div>
-            <IoTrashOutline onClick={handleDelete} />
+            <IoTrashOutline onClick={() => setShowModal(prev => ({ ...prev, modalDelete: true }))} />
             <VscFilePdf />
-          </div>
+          </div>}
           <div className="close-side" >
             <RiCloseFill onClick={() => close(false)} />
           </div>
@@ -66,6 +77,17 @@ const ModalDetail = ({ close, event, dele, show }) => {
               {location?.address}
             </div>
           </div> : null}
+          {
+            userJoin?.length > 0 ?
+              <div className="row team">
+                <AiOutlineTeam />
+                <div className="right-side team">
+                  {userJoin.map(u => {
+                    return <img src={`${u.photoURL}`} alt="" />
+                  })}
+                </div>
+              </div> : null
+          }
         </div>
 
       </div>

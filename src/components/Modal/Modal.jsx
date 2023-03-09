@@ -12,8 +12,12 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FaMapMarkerAlt } from "react-icons/fa"
 import { Map } from "../../services/goong"
 import axios from "axios";
+import showSuggest from "../../hooks/showSuggest";
+import getLocation from "../../hooks/getLocation";
+
+
 const Modal = ({ add, close, start, end, show }) => {
-  const apiKey = "oC8CNdh20xrH8Dpm0SIkZYQqBijW847QWVmBE0DB"
+
   const titleRef = useRef()
   const colorRef = useRef()
   const [description, setDescription] = useState("")
@@ -42,18 +46,16 @@ const Modal = ({ add, close, start, end, show }) => {
     const value = e.target.value
     setCurrentLocation(value)
     if (value.length > 2) {
-      const res = await axios.get(`https://rsapi.goong.io/Place/AutoComplete?input=${value}&api_key=${apiKey}`)
-      setSuggests(res.data.predictions)
-
+      const suggest = await showSuggest(value)
+      setSuggests(suggest)
     }
-
-
   }
 
   const handleSetLocation = async (value) => {
-    const res = await axios.get(`https://rsapi.goong.io/Place/Detail?placeid=${value}&api_key=${apiKey}`)
-    setLocation(res.data.result.geometry.location)
-    setCurrentLocation(res.data.result["formatted_address"])
+    const location = await getLocation(value)
+    console.log(location)
+    setLocation(location.geometry.location)
+    setCurrentLocation(location["formatted_address"])
     setSuggests([])
   }
 

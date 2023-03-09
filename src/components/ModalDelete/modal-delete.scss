@@ -1,0 +1,61 @@
+.modal-delete {
+  margin: 30vh auto;
+  background-color: white;
+  width: 36vw;
+  z-index: 21;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  //   padding: 20px;
+  transition: 0.1s;
+  transform: scale(0.7);
+  visibility: hidden;
+  opacity: 0;
+  &.show {
+    transition: 0.3s;
+    transform: scale(1);
+    visibility: visible;
+    opacity: 1;
+  }
+  .title-bar {
+    display: flex;
+    padding: 10px 20px;
+    border-bottom: 1px solid #5f6368;
+    align-items: center;
+    font-size: 20px;
+    justify-content: flex-end;
+    svg {
+      cursor: pointer;
+      font-size: 37px;
+    }
+    .title {
+      padding-left: 15px;
+    }
+  }
+  .main-popup {
+    padding: 30px;
+    text-align: center;
+    color: #5f6368;
+    .action-btns {
+      margin: 20px 0;
+      display: flex;
+      width: 58%;
+      justify-content: space-between;
+      margin: 30px auto 0;
+      .action-btn {
+        padding: 10px 20px;
+        border: 1px solid;
+        cursor: pointer;
+        border-radius: 3px;
+        &.delete {
+          color: white;
+          background-color: #eb1f2d;
+          transition: all 0.5s;
+          &:hover {
+            color: #eb1f2d;
+            background-color: white;
+          }
+        }
+      }
+    }
+  }
+}

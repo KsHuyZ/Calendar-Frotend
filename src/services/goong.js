@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
+import CircularProgress from "@mui/material/CircularProgress";
 import MapGL, { Marker, GoongMap } from "@goongmaps/goong-map-react";
 import mark from "../assets/images/mark.png";
 export function Map({ lat, long }) {
@@ -13,6 +13,13 @@ export function Map({ lat, long }) {
     longitude: long,
     zoom: 14,
   });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  function handleLoad() {
+    setLoading(false);
+  }
 
   useEffect(() => {
     setViewport({ ...viewport, latitude: lat, longitude: long });
@@ -28,6 +35,7 @@ export function Map({ lat, long }) {
       {...viewport}
       onViewportChange={handleViewportChange}
       goongApiAccessToken={GOONG_MAPTILES_KEY}
+      onLoad={handleLoad}
     >
       <Marker
         longitude={long}
@@ -37,7 +45,11 @@ export function Map({ lat, long }) {
         draggable={true}
         // onDragEnd={handleMarkerDrag}
       >
-        <img src={mark} alt="" style={{ width: 20, height: 20 }} />
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <img src={mark} alt="" style={{ width: 20, height: 20 }} />
+        )}
       </Marker>
     </MapGL>
   );

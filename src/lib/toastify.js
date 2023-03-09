@@ -37,13 +37,8 @@ export const notifyInfor = (msg) => {
   });
 };
 
-const resolveAfter3Sec = (state) => {
-  new Promise((resolve) => {
-    if (state) return resolve();
-  });
-};
-export const notifyPending = (msg, state, msgSuccess, msgError) => {
-  toast.promise(() => resolveAfter3Sec(state), {
+export const notifyPending = (msg, func, msgSuccess, msgError) => {
+  toast.promise(func, {
     pending: msg,
     success: `${msgSuccess} 👌`,
     error: `${msgError} 🤯`,

@@ -55,12 +55,16 @@
   .content {
     .row {
       display: flex;
-
       align-items: center;
       justify-content: flex-start;
       color: #3c4043;
       padding: 2vh 0;
-
+      .team {
+        img {
+          width: 35px;
+          border-radius: 20px;
+        }
+      }
       .background-color {
         .color {
           // background-color: red;
@@ -83,7 +87,14 @@
       }
       .right-side {
         padding-left: 7vw;
+        width: 100%;
         background-color: white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* number of lines to show */
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
     }
   }

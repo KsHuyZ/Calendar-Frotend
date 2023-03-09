@@ -20,7 +20,7 @@ class MyWorkWeek extends React.Component {
 }
 
 MyWorkWeek.propTypes = {
-  date: PropTypes.instanceOf(Date).isRequired
+  date: PropTypes.instanceOf(Date).isRequired,
 };
 
 MyWorkWeek.defaultProps = TimeGrid.defaultProps;

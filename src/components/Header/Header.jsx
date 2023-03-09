@@ -7,28 +7,7 @@ import { Menu, MenuItem } from "@mui/material";
 import { useEffect } from "react";
 import { notifyApi } from "../../api/notifyApi"
 import Notifies from "./Notifies";
-
-const dummyArray = [
-  {
-    accept: 0,
-    created_at: "2023-02-08T14:52:36.958Z",
-    idSchedule: "63d3e81081f3543c65ece15e",
-    idUser: "63d3e86f81f3543c65ece16f",
-    idUserSend: {
-      _id: '63d3e81081f3543c65ece15d',
-      displayName: 'Huy Phan Tiến',
-      email: 'phantienhuy20012002@gmail.com',
-      photoURL: 'https://lh3.googleusercontent.com/a/AEdFTp4P19ui9vvqPD1aSfPjG30WjcL1TxW-0PSnrHBK=s96-c',
-      schedules: Array(1)
-    },
-    msg: "Huy Phan Tiến invited you to their schedule",
-    seen: true,
-    type: 0,
-    updated_at: "2023-02-09T16:57:49.631Z",
-    _id: "63e3b734e04132070d879085"
-  }
-]
-
+import logo from "../../assets/images/logo.svg"
 const Header = () => {
 
   const { user: { displayName, photoURL, auth, id }, socket } = useContext(AuthContext)
@@ -41,8 +20,37 @@ const Header = () => {
   const handleGetNotify = async () => {
     if (id) {
       const notifies = await getNotifiesbyUserId(id)
+      console.log(notifies)
       setAllNotifies(notifies)
     }
+  }
+
+  const handleShowNewNotify = async () => {
+    if (Notification.permission === 'granted') {
+      new Notification('New message', {
+        body: 'You have a new notification',
+        icon: logo
+      });
+
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          new Notification('New message', {
+            body: 'You have a new notification',
+            icon: logo
+          });
+        }
+      });
+    }
+  }
+
+  const handleAccpetNotify = (id) => {
+    setAllNotifies((pre) => {
+      const notifyIndex = pre.findIndex((notify) => notify._id === id)
+      pre[notifyIndex].accept = 1
+      pre[notifyIndex].seen = true
+      return [...pre]
+    })
   }
 
   useEffect(() => {
@@ -52,17 +60,14 @@ const Header = () => {
   useEffect(() => {
     socket.on("new-notify", (notify) => {
       setAllNotifies(pre => [notify, ...pre])
+      handleShowNewNotify()
     })
     socket.on("accept-success", ({ id, idUser }) => {
-      setAllNotifies((pre) => {
-        const notifyIndex = pre.findIndex((notify) => notify._id === id)
-        pre[notifyIndex].accept = 1
-        pre[notifyIndex].seen = true
-        return [...pre]
-      })
+      handleGetNotify(id)
     })
     socket.on("notify-accept-success", (notify) => {
       setAllNotifies(pre => [notify, ...pre])
+      handleShowNewNotify()
     })
     return () => {
       socket.off("new-notify")
@@ -105,7 +110,7 @@ const Header = () => {
           <IoMdNotificationsOutline onClick={() => setShowNotify((pre) => !pre)} />
           {notifyCount > 0 ? <div className="number">{notifyCount}</div> : ""}
         </div>
-        <Notifies show={showNotify} notifies={allNotifies} setNotifies={setAllNotifies} />
+        <Notifies show={showNotify} notifies={allNotifies} setNotifies={setAllNotifies} acceptFunc={handleAccpetNotify} />
         <div className="profile" onClick={(e) => setAnchoEl(e.currentTarget)}>
           <div className="my-setting">
             <div className="name">{displayName}</div>

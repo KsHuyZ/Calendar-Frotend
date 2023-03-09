@@ -51,6 +51,7 @@ const Home = () => {
     const { user, setProgress, socket } = useContext(AuthContext)
     const { getSchedulebyUser } = scheduleApi
     const [loaded, setLoaded] = useState(false)
+    const [userOnline, setUserOnline] = useState([])
     const { id } = useParams()
 
     const toastId = useRef(null);
@@ -101,6 +102,7 @@ const Home = () => {
     }
 
 
+
     const handleAddNewEvent = async (
         title,
         backgroundColor,
@@ -118,7 +120,6 @@ const Home = () => {
         socket.on("create-success", (event) => {
             update("Created", "success")
             setAllEvents((prev) => [...prev, event])
-
         })
 
         socket.on("delete-success", id => {
@@ -134,11 +135,34 @@ const Home = () => {
             update("Update Error", "error")
         })
 
+        socket.on("new-user", (user) => {
+            setUserOnline(prev => prev.push(user))
+        })
+
+        socket.on("new-event", (event) => setAllEvents((prev) => [...prev, event]))
+
+        socket.on("new-event-update", ({ id, startDay, endDay }) => {
+            setAllEvents(pre => {
+                const eventIndex = pre.findIndex(e => e._id === id)
+                let arrayEvents = pre.slice()
+                arrayEvents[eventIndex].start = startDay
+                arrayEvents[eventIndex].end = endDay
+                return arrayEvents
+            })
+        })
+
+        socket.on("new-user-join", users => {
+            setUserOnline(users)
+        })
         return () => {
             socket.off("create-success")
             socket.off("delete-success")
             socket.off('update-success')
             socket.off("update-error")
+            socket.off("new-event")
+            socket.off("new-event-update")
+            socket.off("new-user")
+            socket.off("new-user-join")
         }
     }, [socket])
 
@@ -248,80 +272,88 @@ const Home = () => {
     };
 
     return (
-        <div className='home'>
-            <Modal
-                close={setShowModal}
-                start={start}
-                end={end}
-                add={handleAddNewEvent}
-                show={showModal}
-            />
+        <>
+            <div className="online-show">
+                {userOnline.map(user => <div className="user">
+                    <img src={user.photoURL} alt="heheheheh" />
+                </div>)}
+            </div>
 
-            <ModalShare close={() => setShowModalShare(false)} show={showModalShare} type="permission" />
-            <ModalDetail close={setShowModalDetail} event={event} dele={handleDeleteEvent} show={showModalDetail} />
-            {loaded ?
-                permission ? (<>
-                    <Calendar
-                        style={{ width: "70%" }}
-                        {...{
-                            date,
-                            onNavigate,
-                            view,
-                            onView,
-                            onSelectSlot,
-                            onSelectEvent,
-                            onSelecting,
-                            onDoubleClickEvent,
-                            onKeyPressEvent,
-                        }}
-                        events={allEvents}
-                        onEventDrop={moveEvent}
-                        onEventResize={resizeEvent}
-                        eventPropGetter={eventStyleGetter}
-                        getNow={now}
-                        {...accessors}
-                        selectable="ignoreEvents"
-                    />
-                    <div className="right-side">
-                        <div className="calendar-date" >
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                            >
-                                <StaticDatePicker
-                                    displayStaticWrapperAs="desktop"
-                                    openTo="day"
-                                    value={date}
-                                    onChange={(newValue) => {
-                                        onNavigate(newValue)
-                                    }}
-                                    onMonthChange={(value) => onNavigate(value)
-                                    }
-                                    renderInput={(params) => <TextField {...params} />}
-                                />
-                            </LocalizationProvider>
+            <div className='home'>
 
-                        </div>
-                        <div className="item" onClick={() => setShowModalShare(!showModalShare)}>
-                            <div className="item-content">
-                                <div className="item-option">
-                                    <div className="title-item">
-                                        <TbShare />
-                                        <div>Share for user</div>
+                <Modal
+                    close={setShowModal}
+                    start={start}
+                    end={end}
+                    add={handleAddNewEvent}
+                    show={showModal}
+                />
+
+                <ModalShare close={() => setShowModalShare(false)} show={showModalShare} type="permission" />
+                <ModalDetail close={setShowModalDetail} event={event} dele={handleDeleteEvent} show={showModalDetail} />
+                {loaded ?
+                    permission ? (<>
+                        <Calendar
+                            style={{ width: "70%" }}
+                            {...{
+                                date,
+                                onNavigate,
+                                view,
+                                onView,
+                                onSelectSlot,
+                                onSelectEvent,
+                                onSelecting,
+                                onDoubleClickEvent,
+                                onKeyPressEvent,
+                            }}
+                            events={allEvents}
+                            onEventDrop={moveEvent}
+                            onEventResize={resizeEvent}
+                            eventPropGetter={eventStyleGetter}
+                            getNow={now}
+                            {...accessors}
+                            selectable="ignoreEvents"
+                        />
+                        <div className="right-side">
+                            <div className="calendar-date" >
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                >
+                                    <StaticDatePicker
+                                        displayStaticWrapperAs="desktop"
+                                        openTo="day"
+                                        value={date}
+                                        onChange={(newValue) => {
+                                            onNavigate(newValue)
+                                        }}
+                                        onMonthChange={(value) => onNavigate(value)
+                                        }
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                </LocalizationProvider>
+
+                            </div>
+                            <div className="item" onClick={() => setShowModalShare(!showModalShare)}>
+                                <div className="item-content">
+                                    <div className="item-option">
+                                        <div className="title-item">
+                                            <TbShare />
+                                            <div>Share for user</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </>) : (
-                    <div className="access-denied">
-                        <img src={imageDenied} alt="" />
-                        <p>You haven't permission</p>
-                    </div>
-                )
-                : ""
-            }
-        </div>
-
+                    </>) : (
+                        <div className="access-denied">
+                            <img src={imageDenied} alt="" />
+                            <p>You haven't permission</p>
+                        </div>
+                    )
+                    : ""
+                }
+            </div>
+        </>
     )
 }
 

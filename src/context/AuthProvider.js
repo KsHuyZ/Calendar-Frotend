@@ -59,6 +59,7 @@ export default function AuthProvider({ children }) {
             socket.emit("create-user", {
               id: value?._id,
               displayName: value?.displayName,
+              photoURL: value?.photoURL,
             });
           }
         });
