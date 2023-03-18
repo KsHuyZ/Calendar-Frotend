@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import Calendar from "../../components/Calendar/Calendar";
 import Modal from "../../components/Modal/Modal";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -12,13 +12,14 @@ import { useContext, useEffect } from 'react';
 import { notfifyError, notifyPending, notifySuccess } from '../../lib/toastify';
 import imageDenied from "../../assets/images/access-denied.svg"
 import ModalDetail from '../../components/ModalDetail/ModalDetail';
-// import socket from '../../config/socket';
+import socket from '../../config/socket';
 import { useParams } from 'react-router-dom';
 import "./home.scss"
 import { TbShare } from 'react-icons/tb';
 import ModalShare from '../../components/ModalShare/ModalShare';
 import { toast } from 'react-toastify';
 import { Map } from '../../services/goong';
+import { calendarApi } from '../../api/calendarApi';
 const now = () => new Date();
 
 function isEmpty(obj) {
@@ -48,8 +49,8 @@ const Home = () => {
     const [date, setDate] = useState(now());
     const [view, setView] = useState("month");
     const [permission, setPermission] = useState(false)
-    const { user, setProgress, socket } = useContext(AuthContext)
-    const { getSchedulebyUser } = scheduleApi
+    const { user, setProgress } = useContext(AuthContext)
+    const { getEventbyCalendarId } = calendarApi
     const [loaded, setLoaded] = useState(false)
     const [userOnline, setUserOnline] = useState([])
     const { id } = useParams()
@@ -62,48 +63,36 @@ const Home = () => {
     const handleGetMySchedule = async () => {
         setProgress(30)
         const year = date.getFullYear()
-        if (user.id) {
-            try {
-                const res = await getSchedulebyUser(id, user.id, year)
-                console.log(res.events)
+        try {
+            if (user._id) {
+                const res = await getEventbyCalendarId(id, year)
                 if (res.success) {
                     setPermission(true)
                     setAllEvents(res.events)
                     socket.emit("join-schedule", id)
                     setLoaded(true)
                     return setProgress(100)
-
                 }
-                setAllEvents([])
-                return setProgress(100)
-            } catch (error) {
-                setPermission(false)
-                setProgress(100)
             }
-
+            setAllEvents([])
+            return setProgress(100)
+        } catch (error) {
+            setPermission(false)
+            setProgress(100)
         }
-
     }
 
     const handleDeleteEvent = (idEvent) => {
         const oldEvent = allEvents.filter((event) => event._id === idEvent)
         try {
-            socket.emit("delete-event", { idEvent, idSchedule: id })
+            socket.emit("delete-event", { idEvent })
             notifyLoading("Deleting...")
         } catch (error) {
             setAllEvents(prev => prev.push(oldEvent))
         }
     }
 
-    const handleListenSocket = () => {
-        socket.on("create-event-error", () => {
-            notfifyError("Create error")
-        })
-    }
-
-
-
-    const handleAddNewEvent = async (
+    const handleAddNewEvent = (
         title,
         backgroundColor,
         description,
@@ -111,8 +100,9 @@ const Home = () => {
         end,
         location
     ) => {
-        const event = { title, idSchedule: id, backgroundColor, description, start, end, createdBy: user.id, location }
+        const event = { title, calendarId: id, backgroundColor, description, start, end, location: location }
         socket.emit("create-event", event)
+        console.log("yo is just only one")
         notifyLoading("Creating...")
     };
 
@@ -270,6 +260,8 @@ const Home = () => {
     const onSelecting = (range) => {
         console.log("[onSelecting] range: ", range);
     };
+
+
 
     return (
         <>

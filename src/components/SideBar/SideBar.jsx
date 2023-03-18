@@ -7,6 +7,9 @@ import { useState } from 'react'
 import { userApi } from '../../api/userApi'
 import { AuthContext } from '../../context/AuthProvider'
 import { Link, NavLink } from 'react-router-dom'
+import { AiOutlinePlusCircle } from "react-icons/ai"
+import ModalCreateCal from '../ModalCreateCal/ModalCreateCal'
+import socket from '../../config/socket'
 
 const NAV__LINKS = [
   {
@@ -21,30 +24,38 @@ const NAV__LINKS = [
 
 const SideBar = () => {
   const [scheduleClick, setScheduleClick] = useState(false)
-  const [schedules, setSchedules] = useState()
-  const { user, socket } = useContext(AuthContext)
-  const { getSchedudulesbyUserId } = userApi
+  const [calendars, setCalendars] = useState([])
+  const { user } = useContext(AuthContext)
+  const { getCalendarbyUserId } = userApi
+  const [showModal, setShowModal] = useState(false)
 
-  const handleGetSchduleList = async (id) => {
-    const schdeules = await getSchedudulesbyUserId(id)
-    setSchedules(schdeules)
+  const handleGetCalendarList = async (id, signal) => {
+    const calendars = await getCalendarbyUserId(id, signal)
+    if (calendars) {
+      setCalendars(calendars)
+    }
   }
 
   useEffect(() => {
     socket.on("accept-success", ({ id, idUser }) => {
-      // console.log("accept-success", idUser)
-      handleGetSchduleList(idUser)
+      handleGetCalendarList(idUser)
     })
 
     return () => socket.off("accept-success")
   }, [socket])
 
   useEffect(() => {
-    if (user.id) handleGetSchduleList(user.id)
+    const controller = new AbortController();
+    const signal = controller.signal;
+    if (user._id) handleGetCalendarList(user._id, signal)
+    return () => {
+      controller.abort()
+    }
   }, [user])
 
   return (
     <div className='sidebar'>
+      <ModalCreateCal show={showModal} close={() => setShowModal(false)} newCalendar={setCalendars} />
       <div className="logo">
         <FcCalendar style={{ fontSize: 40 }} />
         <div>My Schedules</div>
@@ -77,19 +88,23 @@ const SideBar = () => {
             </div>
           </div>
 
-          <div className="item-dropdown">
-            {scheduleClick && schedules?.schedules?.map((schedule, index) => (
-              <Link className="content" to={schedule._id} key={index}>
+          {scheduleClick && <div className="item-dropdown">
+            {calendars.map((calendar, index) => (
+              <Link className="content" to={calendar._id} key={index}>
                 <div className="schedule-img">
-                  <img src={schedule.idOwner.photoURL} alt="" />
+                  <img src={calendar.photoCalendar} alt="" />
                 </div>
                 <div className="schedule-name">
-                  <div>{schedules?.email === schedule.idOwner.email ? "My" : `${schedule.idOwner.displayName.split(" ")[0]}'s`} Schedule</div>
+                  <div>{calendar.calendarName}</div>
                 </div>
               </Link>
-            ))}
-          </div>
 
+            ))}
+            <div className="create-new" onClick={() => setShowModal(true)}>
+              <AiOutlinePlusCircle /> <div> Add Calendar</div>
+            </div>
+          </div>
+          }
 
         </div>
 

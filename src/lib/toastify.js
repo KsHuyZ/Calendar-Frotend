@@ -38,7 +38,7 @@ export const notifyInfor = (msg) => {
 };
 
 export const notifyPending = (msg, func, msgSuccess, msgError) => {
-  toast.promise(func, {
+  return toast.promise(func, {
     pending: msg,
     success: `${msgSuccess} 👌`,
     error: `${msgError} 🤯`,
@@ -52,5 +52,6 @@ export const notifyOffline = () => {
     draggable: true,
     progress: undefined,
     theme: "light",
+    autoClose:false
   });
 };

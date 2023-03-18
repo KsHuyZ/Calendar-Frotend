@@ -68,7 +68,7 @@ const ModalDetail = ({ close, event, dele, show }) => {
           <div className="row owner">
             <TbCalendarEvent />
             <div className="right-side owner">
-              {createdBy?.displayName}
+              {createdBy?.userName}
             </div>
           </div>
           {location ? <div className="row location">

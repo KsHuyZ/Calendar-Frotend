@@ -36,7 +36,7 @@ const Modal = ({ add, close, start, end, show }) => {
     const locationObject = {
       address: currentLocation, latitude: location.lat, longitude: location.lng
     }
-    await add(title, color, description, start, end, locationObject)
+    add(title, color, description, start, end, locationObject)
     close(false)
     setShowMap(false)
     handleCloseModal()

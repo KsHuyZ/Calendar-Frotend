@@ -1,11 +1,11 @@
-import socket from "../config/socket";
 import axios from "../lib/axios";
 import { notfifyError, notifySuccess } from "../lib/toastify";
 
 export const userApi = {
-  authByGoogle: async (displayName, email, photoURL) => {
+  authByGoogle: async (uid, displayName, email, photoURL) => {
     try {
       const res = await axios.post("/user/gg-auth", {
+        uid,
         displayName,
         email,
         photoURL,
@@ -20,12 +20,16 @@ export const userApi = {
       notfifyError("Login fail");
     }
   },
-  getUserbyEmail: async (email) => {
+  getUserbyUid: async (uid) => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
-      const res = await axios.get(`/user/by-email/${email}`);
+      const res = await axios.get(`/user/by-uid/${uid}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
       return res.data.user;
     } catch (error) {
       console.log(error);
+      return null;
     }
   },
   getUserbyId: async (id) => {
@@ -36,12 +40,15 @@ export const userApi = {
       return error;
     }
   },
-  getSchedudulesbyUserId: async (id) => {
+  getCalendarbyUserId: async (id, signal) => {
     try {
-      const res = await axios.get(`/user/schedule/${id}`);
-      return res.data.schedule;
+      const res = await axios.get(`/user/calendar/${id}`, {
+        signal,
+      });
+      return res.data.calendar;
     } catch (error) {
       console.log(error);
+      // return null;
     }
   },
   getUserListbyEmail: async (email) => {

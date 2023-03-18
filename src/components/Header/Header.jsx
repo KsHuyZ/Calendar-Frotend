@@ -8,9 +8,10 @@ import { useEffect } from "react";
 import { notifyApi } from "../../api/notifyApi"
 import Notifies from "./Notifies";
 import logo from "../../assets/images/logo.svg"
+import socket from "../../config/socket";
 const Header = () => {
 
-  const { user: { displayName, photoURL, auth, id }, socket } = useContext(AuthContext)
+  const { user: { userName, photoURL, auth, id } } = useContext(AuthContext)
   const [anchorEl, setAnchoEl] = useState(null)
   const [allNotifies, setAllNotifies] = useState([])
   const [showNotify, setShowNotify] = useState(false)
@@ -113,7 +114,7 @@ const Header = () => {
         <Notifies show={showNotify} notifies={allNotifies} setNotifies={setAllNotifies} acceptFunc={handleAccpetNotify} />
         <div className="profile" onClick={(e) => setAnchoEl(e.currentTarget)}>
           <div className="my-setting">
-            <div className="name">{displayName}</div>
+            <div className="name">{userName}</div>
             <div className="setting">My settings</div>
           </div>
           <div className="avatar" >

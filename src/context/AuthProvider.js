@@ -3,21 +3,19 @@ import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../api/userApi";
 import LoadingBar from "react-top-loading-bar";
-// import socket from "../config/socket";
-import io from "socket.io-client";
+import socket from "../config/socket";
+// import io from "socket.io-client";
 import { serverHost } from "../config/serverHost";
 import { notfifyError, notifyOffline, notifySuccess } from "../lib/toastify";
-
-const Socket = io.connect(serverHost.product);
 
 export const AuthContext = createContext();
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState({});
   const [progress, setProgress] = useState(0);
-  const [socket, setSocket] = useState(Socket);
+
   const [status, setStatus] = useState(window.navigator.onLine);
-  const { getUserbyEmail } = userApi;
+  const { getUserbyUid } = userApi;
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -43,26 +41,35 @@ export default function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    if (!Socket.connected) {
+    socket.on("connect", function () {
+      socket.emit("authenticate", {
+        token: localStorage.getItem("accessToken"),
+      });
+    });
+    return () => {
+      socket.off("connect");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket.connected) {
       handleCheckInternetStatus();
     }
-  }, [Socket]);
+  }, [socket]);
 
   useEffect(() => {
     const unsubcribed = auth.onIdTokenChanged(async (user) => {
       if (user?.uid) {
-        const res = await getUserbyEmail(user.email).then((value) => {
-          if (value?._id) {
-            const userWithId = Object.assign(user, { id: value?._id });
-            localStorage.setItem("accessToken", user.accessToken);
-            setUser(userWithId);
-            socket.emit("create-user", {
-              id: value?._id,
-              displayName: value?.displayName,
-              photoURL: value?.photoURL,
-            });
-          }
-        });
+        localStorage.setItem("accessToken", user.accessToken);
+        const res = await getUserbyUid(user.uid);
+        if (res?._id) {
+          setUser(res);
+          socket.emit("create-user", {
+            id: res?._id,
+            userName: res?.userName,
+            photoURL: res?.photoURL,
+          });
+        }
         return;
       }
       setUser({});
@@ -73,7 +80,7 @@ export default function AuthProvider({ children }) {
     return () => {
       unsubcribed();
     };
-  }, [auth, socket]);
+  }, [auth]);
 
   return (
     <AuthContext.Provider
@@ -81,7 +88,6 @@ export default function AuthProvider({ children }) {
         user,
         setUser,
         setProgress,
-        socket,
         progress,
         handleCheckInternetStatus,
         status,

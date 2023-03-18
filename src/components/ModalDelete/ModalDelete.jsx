@@ -3,7 +3,10 @@ import { RiCloseFill } from "react-icons/ri"
 import "./modal-delete.scss"
 const ModalDelete = ({ show, name, close, dele }) => {
 
-
+  const handleDelete = () => {
+    dele();
+    close()
+  }
 
   return (
     <div className={`background ${show ? "show" : ""}`}>
@@ -17,7 +20,7 @@ const ModalDelete = ({ show, name, close, dele }) => {
           </div>
           <div className="action-btns">
             <div className="cancel action-btn" onClick={() => close(false)}>Cancel</div>
-            <div className="delete action-btn" onClick={dele}>Delete</div>
+            <div className="delete action-btn" onClick={handleDelete}>Delete</div>
           </div>
         </div>
 

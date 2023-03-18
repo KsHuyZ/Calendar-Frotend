@@ -4,6 +4,7 @@ import "./modal-share.scss"
 import { userApi } from '../../api/userApi';
 import { AuthContext } from '../../context/AuthProvider';
 import { notifyInfor } from '../../lib/toastify';
+import socket from '../../config/socket';
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const ModalShare = ({ close, show, type, event }) => {
@@ -11,7 +12,7 @@ const ModalShare = ({ close, show, type, event }) => {
     const [value, setValue] = useState("")
     const [usersSelected, setUsersSelected] = useState([])
     const { getUserListbyEmail } = userApi
-    const { user: u, socket } = useContext(AuthContext)
+    const { user: u } = useContext(AuthContext)
     const [permission, setPermission] = useState({
         "view": true,
         "update": false,

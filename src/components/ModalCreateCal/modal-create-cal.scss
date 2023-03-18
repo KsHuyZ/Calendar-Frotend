@@ -1,0 +1,105 @@
+.modal-create-cal {
+  margin: 10vh auto;
+  background-color: white;
+  width: 36vw;
+  z-index: 23;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  transition: 0.1s;
+  transform: scale(0.7);
+  visibility: hidden;
+  opacity: 0;
+  &.show {
+    transition: 0.3s;
+    transform: scale(1);
+    visibility: visible;
+    opacity: 1;
+  }
+  .inside {
+    padding: 20px;
+    .main-body {
+      margin: 20px;
+      .row {
+        display: flex;
+        margin: 0.5em 0;
+        align-items: center;
+        svg {
+          display: flex;
+          color: #5f6368;
+          font-size: 20px;
+        }
+        .image-field {
+          margin: auto;
+          width: 85%;
+          height: 15em;
+          border: 2px dashed #ccced1;
+          text-align: center;
+          font-family: "Nunito", sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .image-group {
+            height: 100%;
+            .have-image {
+              position: relative;
+              height: 100%;
+              svg {
+                position: absolute;
+                top: 0;
+                right: 0;
+              }
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+            .none-image {
+              height: 100%;
+              display: flex;
+              align-items: center;
+              input {
+                opacity: 0;
+                width: 100%;
+                // height: 100%;
+              }
+              div {
+                font-weight: 700;
+                color: #707070;
+                span {
+                  color: #57a6ff;
+                }
+              }
+              svg {
+                font-size: 30px;
+                margin: auto;
+              }
+            }
+          }
+        }
+      }
+      .title {
+        justify-content: flex-end;
+      }
+    }
+    .footer {
+      display: flex;
+      font-weight: bold;
+      text-align: end;
+      justify-content: flex-end;
+      // padding: 0 0 20px;
+      .cancel {
+        padding: 0 20px;
+        cursor: pointer;
+      }
+      .send {
+        padding: 0 20px;
+        cursor: pointer;
+        .disabled {
+          color: #ced4da;
+          cursor: default;
+        }
+      }
+    }
+  }
+}

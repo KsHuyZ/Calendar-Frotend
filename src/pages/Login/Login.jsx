@@ -5,7 +5,7 @@ import { RiGoogleFill } from "react-icons/ri"
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { AuthContext } from '../../context/AuthProvider'
 import { userApi } from '../../api/userApi'
-import { useQuery } from '@tanstack/react-query'
+
 const Login = () => {
   const auth = getAuth()
   const navigate = useNavigate()
@@ -16,8 +16,8 @@ const Login = () => {
     const provider = new GoogleAuthProvider()
     try {
       const res = await signInWithPopup(auth, provider)
-      const { displayName, email, photoURL } = res.user
-      const success = await authByGoogle(displayName, email, photoURL)
+      const { uid, displayName, email, photoURL } = res.user
+      const success = await authByGoogle(uid, displayName, email, photoURL)
       if (success) return navigate("/")
     } catch (error) {
       console.log(error)
