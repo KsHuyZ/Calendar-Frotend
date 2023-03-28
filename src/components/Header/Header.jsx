@@ -11,33 +11,34 @@ import logo from "../../assets/images/logo.svg"
 import socket from "../../config/socket";
 const Header = () => {
 
-  const { user: { userName, photoURL, auth, id } } = useContext(AuthContext)
+  const { user: { userName, photoURL, auth, _id } } = useContext(AuthContext)
   const [anchorEl, setAnchoEl] = useState(null)
   const [allNotifies, setAllNotifies] = useState([])
   const [showNotify, setShowNotify] = useState(false)
+  const [notifyCount, setNotifyCount] = useState()
   const open = Boolean(anchorEl)
-  const { getNotifiesbyUserId } = notifyApi
+  const { getNotifiesbyUserId, checkAllNotify } = notifyApi
 
-  const handleGetNotify = async () => {
-    if (id) {
-      const notifies = await getNotifiesbyUserId(id)
-      console.log(notifies)
-      setAllNotifies(notifies)
-    }
+  const handleGetNotify = async (id) => {
+    const notifies = await getNotifiesbyUserId(id)
+    console.log(notifies)
+    setAllNotifies(notifies)
+    const count = handleCountNotify(notifies)
+    setNotifyCount(count)
   }
 
-  const handleShowNewNotify = async () => {
+  const handleShowNewNotify = async (msg) => {
     if (Notification.permission === 'granted') {
-      new Notification('New message', {
-        body: 'You have a new notification',
+      new Notification('New notification', {
+        body: msg,
         icon: logo
       });
 
     } else if (Notification.permission !== 'denied') {
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-          new Notification('New message', {
-            body: 'You have a new notification',
+          new Notification('New notification', {
+            body: msg,
             icon: logo
           });
         }
@@ -55,24 +56,42 @@ const Header = () => {
   }
 
   useEffect(() => {
-    handleGetNotify()
-  }, [id])
+    if (_id) {
+      handleGetNotify(_id)
+    }
+
+  }, [_id])
 
   useEffect(() => {
     socket.on("new-notify", (notify) => {
       setAllNotifies(pre => [notify, ...pre])
-      handleShowNewNotify()
+      handleShowNewNotify(notify.msg)
     })
-    socket.on("accept-success", ({ id, idUser }) => {
-      handleGetNotify(id)
+    socket.on("accept-success", (invitation) => {
+
+
+      setAllNotifies(prev => {
+        const index = prev.findIndex(notify => notify._id === invitation._id)
+        let allNotifiesCopy = prev.splice()
+        allNotifiesCopy[index] = invitation
+        if (index >= 0) {
+          return allNotifiesCopy
+        }
+      })
+
+
+
+
     })
     socket.on("notify-accept-success", (notify) => {
+      console.log("new-notify", notify)
       setAllNotifies(pre => [notify, ...pre])
-      handleShowNewNotify()
+      handleShowNewNotify(notify.msg)
     })
     return () => {
       socket.off("new-notify")
       socket.off("accept-success")
+      socket.off("notify-accept-success")
     }
   }, [socket])
 
@@ -80,18 +99,43 @@ const Header = () => {
     auth.signOut()
   }
 
-  let notifyCount = 0
-  const handleCountNotify = async () => {
-    if (allNotifies.length > 0) {
-      allNotifies.map(notify => {
-        if (!notify.seen) {
-          notifyCount++
+
+  const handleCountNotify = (notifies) => {
+    let count = 0;
+    if (notifies.length > 0) {
+      notifies.map(notify => {
+        console.log(notify.isAction)
+        if (!notify.isAction) {
+          count++
         }
       })
 
     }
+
+    return count
   }
-  handleCountNotify()
+
+
+  const handleShowNotify = async () => {
+    setShowNotify((pre) => !pre)
+    if (notifyCount > 0) {
+      const success = await checkAllNotify(_id)
+      if (success) {
+        setAllNotifies(prev => {
+          let allNotifiesCopy = prev.slice()
+          allNotifiesCopy.forEach((notify, index) => {
+            console.log(notify)
+            if (!notify.isAction) {
+              notify.isAction = true
+            }
+          })
+          return allNotifiesCopy
+        })
+
+      }
+    }
+    setNotifyCount(0)
+  }
   return (
     <div className="menu-header">
       <div className="left-side">
@@ -108,7 +152,7 @@ const Header = () => {
       </div>
       <div className="right-side">
         <div className="notification">
-          <IoMdNotificationsOutline onClick={() => setShowNotify((pre) => !pre)} />
+          <IoMdNotificationsOutline onClick={handleShowNotify} />
           {notifyCount > 0 ? <div className="number">{notifyCount}</div> : ""}
         </div>
         <Notifies show={showNotify} notifies={allNotifies} setNotifies={setAllNotifies} acceptFunc={handleAccpetNotify} />

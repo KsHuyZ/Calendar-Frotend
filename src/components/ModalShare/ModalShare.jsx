@@ -87,7 +87,7 @@ const ModalShare = ({ close, show, type, event }) => {
                                 {usersSelected.map((permission, index) => (
                                     <div className="tag-item" key={index}>
                                         <img src={permission.photoURL} alt="" />
-                                        <span className="text">{permission.displayName}</span>
+                                        <span className="text">{permission.userName}</span>
                                         <span className="close" onClick={() => handleDeletePermission(permission)}>&times;</span>
                                     </div>
                                 ))}
@@ -96,12 +96,12 @@ const ModalShare = ({ close, show, type, event }) => {
                             <div className="dropdown">
                                 {users.filter((item) => {
                                     const searchTerm = value.toLowerCase();
-                                    const permissionName = item.displayName.toLowerCase();
+                                    const permissionName = item.userName.toLowerCase();
                                     return (
                                         searchTerm &&
                                         permissionName.includes(searchTerm) &&
                                         permissionName !== searchTerm &&
-                                        item._id !== u.id
+                                        item._id !== u._id
                                     );
                                 })
                                     .slice(0, 10)
@@ -112,14 +112,14 @@ const ModalShare = ({ close, show, type, event }) => {
                                                 < div
                                                     onClick={() => handleAddPermission(item)}
                                                     className="dropdown-row"
-                                                    key={item.displayName}>
+                                                    key={item.userName}>
                                                     <img src={item.photoURL} alt="" className='row-image' />
                                                     <div className="email-name">
                                                         <div className="email">
                                                             {item.email}
                                                         </div>
                                                         <div className="name">
-                                                            {item.displayName}
+                                                            {item.userName}
                                                         </div>
                                                     </div>
                                                 </div>

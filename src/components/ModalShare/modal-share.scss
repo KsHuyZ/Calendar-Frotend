@@ -139,6 +139,7 @@
     .send {
       padding: 0 20px;
       cursor: pointer;
+      transition: 0.5s;
       .disabled {
         color: #ced4da;
         cursor: default;

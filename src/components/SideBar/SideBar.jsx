@@ -23,7 +23,8 @@ const NAV__LINKS = [
 
 
 const SideBar = () => {
-  const [scheduleClick, setScheduleClick] = useState(false)
+  let [scheduleClick, setScheduleClick] = useState(false)
+  // let scheduleClick = false
   const [calendars, setCalendars] = useState([])
   const { user } = useContext(AuthContext)
   const { getCalendarbyUserId } = userApi
@@ -34,6 +35,11 @@ const SideBar = () => {
     if (calendars) {
       setCalendars(calendars)
     }
+  }
+
+  const handleClick = () => {
+    console.log("Is clicked")
+    setScheduleClick(!scheduleClick)
   }
 
   useEffect(() => {
@@ -75,8 +81,8 @@ const SideBar = () => {
         ))}
 
 
-        <div className="dropdown-item">
-          <div className={`item ${scheduleClick ? "active" : ""}`} onClick={() => setScheduleClick(!scheduleClick)} >
+        <div className="dropdown-item" onClick={handleClick}>
+          <div className={`item ${scheduleClick ? "active" : ""}`} >
             <div className="item-content">
               <div className="item-option">
                 <div className="title-item">
@@ -88,7 +94,7 @@ const SideBar = () => {
             </div>
           </div>
 
-          {scheduleClick && <div className="item-dropdown">
+          <div className={`item-dropdown ${scheduleClick ? "show" : ""}`}>
             {calendars.map((calendar, index) => (
               <Link className="content" to={calendar._id} key={index}>
                 <div className="schedule-img">
@@ -104,7 +110,7 @@ const SideBar = () => {
               <AiOutlinePlusCircle /> <div> Add Calendar</div>
             </div>
           </div>
-          }
+
 
         </div>
 

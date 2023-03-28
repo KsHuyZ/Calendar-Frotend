@@ -61,7 +61,7 @@ export default function AuthProvider({ children }) {
     const unsubcribed = auth.onIdTokenChanged(async (user) => {
       if (user?.uid) {
         localStorage.setItem("accessToken", user.accessToken);
-        const res = await getUserbyUid(user.uid);
+        const res = await getUserbyUid(user.uid, user.accessToken);
         if (res?._id) {
           setUser(res);
           socket.emit("create-user", {

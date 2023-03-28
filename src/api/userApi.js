@@ -20,11 +20,11 @@ export const userApi = {
       notfifyError("Login fail");
     }
   },
-  getUserbyUid: async (uid) => {
-    const accessToken = localStorage.getItem("accessToken");
+  getUserbyUid: async (uid, token) => {
+    console.log(token);
     try {
       const res = await axios.get(`/user/by-uid/${uid}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       return res.data.user;
     } catch (error) {
@@ -57,6 +57,7 @@ export const userApi = {
       return res.data.users;
     } catch (error) {
       console.log(error);
+      return [];
     }
   },
 };

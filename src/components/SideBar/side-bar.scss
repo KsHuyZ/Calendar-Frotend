@@ -66,6 +66,16 @@
       }
     }
     .item-dropdown {
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.5s;
+      position: absolute;
+      top: 0;
+      &.show {
+        top: 2.5em;
+        opacity: 1;
+        visibility: visible;
+      }
       .create-new {
         width: 90%;
         display: flex;
@@ -114,6 +124,16 @@
             border-radius: 20px;
             object-fit: cover;
             height: 1.5em;
+          }
+        }
+        .schedule-name {
+          div {
+            width: 100%;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1; /* number of lines to show */
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
           }
         }
       }

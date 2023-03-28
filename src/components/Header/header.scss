@@ -11,7 +11,6 @@
     align-items: flex-end;
     width: 36%;
     .app-name {
-   
       h1 {
         margin: 0;
       }
@@ -221,6 +220,20 @@
               height: 10px;
               background-color: #1876f2;
               border-radius: 20px;
+            }
+          }
+          .empty-notify {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2em 0;
+            img {
+              width: 50%;
+            }
+            p {
+              text-align: center;
+              font-weight: 700;
             }
           }
         }
