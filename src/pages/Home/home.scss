@@ -1,13 +1,23 @@
-.online-show {
+.tools-side {
   display: flex;
-  .user {
-    width: 50px;
-    img {
-      width: 100%;
-      border-radius: 50px;
+  font-size: 20px;
+  align-items: center;
+  justify-content: flex-end;
+  .online-show {
+    display: flex;
+    .user {
+      width: 50px;
+      img {
+        width: 70%;
+        border-radius: 50px;
+      }
     }
   }
+  svg {
+    cursor: pointer;
+  }
 }
+
 .home {
   display: flex;
   height: 100vh;
@@ -65,8 +75,8 @@
     }
   }
   .right-side {
-    background-color: #f7f8fc;
-    border-top-left-radius: 10px;
+    // background-color: #f7f8fc;
+    // border-top-left-radius: 10px;
   }
   .calendar-date {
     margin: 3em;

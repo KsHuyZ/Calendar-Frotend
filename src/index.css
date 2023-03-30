@@ -122,3 +122,6 @@ button.MuiPickersDay-root.Mui-selected {
   /* border: 1px solid;
   border-radius: 10px; */
 }
+.rbc-calendar {
+  width: 100%;
+}

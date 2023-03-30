@@ -8,6 +8,7 @@ import ErrorPage from "./ErrorPage";
 import Header from "../components/Header/Header";
 import SideBar from "../components/SideBar/SideBar";
 import Dashboard from "../pages/DashBoard/Dashboard";
+import { useState } from "react";
 const AuthLayout = () => {
   return (
     <AuthProvider>
@@ -17,19 +18,13 @@ const AuthLayout = () => {
 };
 
 const DashBoardLayout = () => {
+  const [showSideBar, setShowSideBar] = useState(false);
   return (
-    <>
-      <div style={{ display: "flex" }}>
-        <div style={{ width: "15%" }}>
-          <SideBar />
-        </div>
-
-        <div style={{ width: "85%" }}>
-          <Header />
-          <Outlet />
-        </div>
-      </div>
-    </>
+    <div style={{ padding: "0 20px" }}>
+      <SideBar show={showSideBar} close={() => setShowSideBar(false)} />
+      <Header show={showSideBar} openSideBar={() => setShowSideBar(true)} />
+      <Outlet />
+    </div>
   );
 };
 

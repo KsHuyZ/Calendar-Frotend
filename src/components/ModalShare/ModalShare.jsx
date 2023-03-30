@@ -36,14 +36,14 @@ const ModalShare = ({ close, show, type, event }) => {
         }
     }
 
-    const handleAddUserToSchedule = async () => {
+    const handleAddUserToSchedule = () => {
         const users = usersSelected.map(user => user._id)
         socket.emit("invite-join", { users, permissions: permission })
         notifyInfor("Your invitation has been sent")
         close()
     }
 
-    const handleInvitedAttend = async () => {
+    const handleInvitedAttend = () => {
         const users = usersSelected.map(user => user._id)
         socket.emit("attend-event", { users, event })
         notifyInfor("Your invitation has been sent")

@@ -6,7 +6,6 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import { scheduleApi } from '../../api/scheduleApi';
 import { AuthContext } from '../../context/AuthProvider';
 import { useContext, useEffect } from 'react';
 import { notfifyError, notifyPending, notifySuccess } from '../../lib/toastify';
@@ -20,6 +19,7 @@ import ModalShare from '../../components/ModalShare/ModalShare';
 import { toast } from 'react-toastify';
 import { Map } from '../../services/goong';
 import { calendarApi } from '../../api/calendarApi';
+import { BsChatRightText } from "react-icons/bs"
 const now = () => new Date();
 
 function isEmpty(obj) {
@@ -142,6 +142,7 @@ const Home = () => {
         })
 
         socket.on("new-user-join", users => {
+            console.log(users)
             setUserOnline(users)
         })
         return () => {
@@ -265,10 +266,18 @@ const Home = () => {
 
     return (
         <>
-            <div className="online-show">
-                {userOnline.map(user => <div className="user">
-                    <img src={user.photoURL} alt="heheheheh" />
-                </div>)}
+            <div className="tools-side">
+
+                <div className="online-show">
+                    {userOnline.map(user => {
+                        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                        return (<div className="user" >
+                            <img src={user.photoURL} alt="" style={{ border: `#${randomColor} 3px solid` }} />
+                        </div>)
+                    }
+                    )}
+                </div>
+                <BsChatRightText />
             </div>
 
             <div className='home'>
@@ -286,7 +295,7 @@ const Home = () => {
                 {loaded ?
                     permission ? (<>
                         <Calendar
-                            style={{ width: "70%" }}
+
                             {...{
                                 date,
                                 onNavigate,

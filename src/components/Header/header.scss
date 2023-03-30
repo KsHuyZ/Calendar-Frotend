@@ -11,7 +11,42 @@
     align-items: flex-end;
     width: 36%;
     .app-name {
+      display: flex;
+      justify-content: space-between;
+      width: 70%;
+      align-items: center;
+      .content {
+        display: inline-block;
+        cursor: pointer;
+        // position: relative;
+        // left: 50%;
+        // top: 50px;
+        .icon1,
+        .icon2,
+        .icon3 {
+          width: 30px;
+          height: 3px;
+          background-color: black;
+          margin: 6px 0;
+          transition: 0.5s;
+          border-radius: 10px;
+        }
+      }
+
+      .change .icon1 {
+        transform: rotate(-45deg) translate(-6px, 4px);
+      }
+
+      .change .icon2 {
+        opacity: 0;
+      }
+
+      .change .icon3 {
+        transform: rotate(45deg) translate(-8px, -8px);
+      }
+
       h1 {
+        display: flex;
         margin: 0;
       }
     }
@@ -37,38 +72,6 @@
     width: 30%;
     display: flex;
     justify-content: center;
-    .search {
-      width: 18vw;
-      position: relative;
-      input {
-        width: 100%;
-        border: 2px solid #f3f7f9;
-        border-radius: 10px;
-        padding: 15px 13px;
-        transition: 0.5s;
-        caret-color: #3c64ff;
-        &::placeholder {
-          color: #b5bfe6;
-        }
-        &:focus {
-          box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-          transition: 0.5s;
-        }
-      }
-      svg {
-        position: absolute;
-        top: 1vh;
-        left: 16vw;
-        background-color: #335dff;
-        color: white;
-        padding: 7px;
-        border-radius: 10px;
-        border: 2px solid #c6deff;
-        cursor: pointer;
-
-        // background-color: ;
-      }
-    }
   }
   .right-side {
     width: 34%;

@@ -9,7 +9,8 @@ import { notifyApi } from "../../api/notifyApi"
 import Notifies from "./Notifies";
 import logo from "../../assets/images/logo.svg"
 import socket from "../../config/socket";
-const Header = () => {
+import { FcCalendar } from "react-icons/fc"
+const Header = ({ openSideBar, show }) => {
 
   const { user: { userName, photoURL, auth, _id } } = useContext(AuthContext)
   const [anchorEl, setAnchoEl] = useState(null)
@@ -21,7 +22,6 @@ const Header = () => {
 
   const handleGetNotify = async (id) => {
     const notifies = await getNotifiesbyUserId(id)
-    console.log(notifies)
     setAllNotifies(notifies)
     const count = handleCountNotify(notifies)
     setNotifyCount(count)
@@ -140,16 +140,19 @@ const Header = () => {
     <div className="menu-header">
       <div className="left-side">
         <div className="app-name">
-          <h1>My Schedule</h1>
+          <div class={`content ${show && "change"}`} onClick={openSideBar} >
+            <div class="icon1"></div>
+            <div class="icon2"></div>
+            <div class="icon3"></div>
+          </div>
+
+          <h1>
+            <FcCalendar fontSize={40} />
+            My Schedule</h1>
         </div>
 
       </div>
-      <div className="mid-side">
-        <div className="search">
-          <input type="text" placeholder="Search" />
-          <AiOutlineSearch />
-        </div>
-      </div>
+
       <div className="right-side">
         <div className="notification">
           <IoMdNotificationsOutline onClick={handleShowNotify} />

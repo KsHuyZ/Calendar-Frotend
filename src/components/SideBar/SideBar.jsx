@@ -22,7 +22,7 @@ const NAV__LINKS = [
 
 
 
-const SideBar = () => {
+const SideBar = ({ show, close }) => {
   let [scheduleClick, setScheduleClick] = useState(false)
   // let scheduleClick = false
   const [calendars, setCalendars] = useState([])
@@ -60,65 +60,73 @@ const SideBar = () => {
   }, [user])
 
   return (
-    <div className='sidebar'>
-      <ModalCreateCal show={showModal} close={() => setShowModal(false)} newCalendar={setCalendars} />
-      <div className="logo">
-        <FcCalendar style={{ fontSize: 40 }} />
-        <div>My Schedules</div>
-      </div>
-      <div className="sidebar-list">
-        {NAV__LINKS.map((item, index) => (
-          <NavLink key={index} className={(navClass) => `item ${navClass.isActive ? "active" : ""}`} to={item.url} >
-            <div className="item-content">
-              <div className="item-option">
-                <div className="title-item">
-                  {item.icon}
-                  <div>{item.display}</div>
+    <div className={`background ${show && "show"} `} style={{ display: 'flex' }}>
+      <div className={`sidebar ${show && "show"}`} >
+        <ModalCreateCal show={showModal} close={() => setShowModal(false)} newCalendar={setCalendars} />
+        <div className="logo">
+          <div className={`content ${show && "change"}`} id="icon" onClick={close}>
+            <div className="icon1"></div>
+            <div className="icon2"></div>
+            <div className="icon3"></div>
+          </div>
+          <FcCalendar style={{ fontSize: 40 }} />
+          <div>My Schedules</div>
+        </div>
+        <div className="sidebar-list">
+          {NAV__LINKS.map((item, index) => (
+            <NavLink key={index} className={(navClass) => `item ${navClass.isActive ? "active" : ""}`} to={item.url} >
+              <div className="item-content">
+                <div className="item-option">
+                  <div className="title-item">
+                    {item.icon}
+                    <div>{item.display}</div>
+                  </div>
+                </div>
+              </div>
+            </NavLink>
+          ))}
+
+
+          <div className="dropdown-item" onClick={handleClick}>
+            <div className={`item ${scheduleClick ? "active" : ""}`} >
+              <div className="item-content">
+                <div className="item-option">
+                  <div className="title-item">
+                    <TbCalendarEvent />
+                    <div>Schedule</div>
+                  </div>
+                  <RiArrowDropDownFill className={`${scheduleClick ? "active" : ""}`} />
                 </div>
               </div>
             </div>
-          </NavLink>
-        ))}
 
+            <div className={`item-dropdown ${scheduleClick ? "show" : ""}`}>
+              {calendars.map((calendar, index) => (
+                <Link className="content" to={calendar._id} key={index}>
+                  <div className="schedule-img">
+                    <img src={calendar.photoCalendar} alt="" />
+                  </div>
+                  <div className="schedule-name">
+                    <div>{calendar.calendarName}</div>
+                  </div>
+                </Link>
 
-        <div className="dropdown-item" onClick={handleClick}>
-          <div className={`item ${scheduleClick ? "active" : ""}`} >
-            <div className="item-content">
-              <div className="item-option">
-                <div className="title-item">
-                  <TbCalendarEvent />
-                  <div>Schedule</div>
-                </div>
-                <RiArrowDropDownFill className={`${scheduleClick ? "active" : ""}`} />
+              ))}
+              <div className="create-new" onClick={() => setShowModal(true)}>
+                <AiOutlinePlusCircle /> <div> Add Calendar</div>
               </div>
             </div>
+
+
           </div>
 
-          <div className={`item-dropdown ${scheduleClick ? "show" : ""}`}>
-            {calendars.map((calendar, index) => (
-              <Link className="content" to={calendar._id} key={index}>
-                <div className="schedule-img">
-                  <img src={calendar.photoCalendar} alt="" />
-                </div>
-                <div className="schedule-name">
-                  <div>{calendar.calendarName}</div>
-                </div>
-              </Link>
 
-            ))}
-            <div className="create-new" onClick={() => setShowModal(true)}>
-              <AiOutlinePlusCircle /> <div> Add Calendar</div>
-            </div>
-          </div>
+
 
 
         </div>
-
-
-
-
-
       </div>
+
     </div>
   )
 }

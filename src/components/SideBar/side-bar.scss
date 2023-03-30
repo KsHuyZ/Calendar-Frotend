@@ -1,12 +1,21 @@
 .sidebar {
   background-color: #f7f8fc;
   height: 100vh;
-  padding: 10px;
+  width: 0;
+  padding: 0;
+  transition: 0.3s;
+  opacity: 0;
+  &.show {
+    padding: 10px;
+    opacity: 1;
+    width: 17vw;
+  }
   .logo {
     display: flex;
     font-weight: bold;
     font-size: 20px;
     align-items: center;
+    justify-content: space-between;
   }
   .sidebar-list {
     display: flex;
@@ -189,4 +198,34 @@
       }
     }
   }
+}
+.content#icon {
+  display: inline-block;
+  cursor: pointer;
+  z-index: 5;
+  // position: relative;
+  // left: 50%;
+  // top: 50px;
+  .icon1,
+  .icon2,
+  .icon3 {
+    width: 30px;
+    height: 3px;
+    background-color: black;
+    margin: 6px 0;
+    transition: 0.5s;
+    border-radius: 10px;
+  }
+}
+
+.change .icon1 {
+  transform: rotate(-45deg) translate(-6px, 4px);
+}
+
+.change .icon2 {
+  opacity: 0;
+}
+
+.change .icon3 {
+  transform: rotate(45deg) translate(-8px, -8px);
 }
