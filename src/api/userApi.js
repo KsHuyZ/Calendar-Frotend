@@ -21,14 +21,13 @@ export const userApi = {
     }
   },
   getUserbyUid: async (uid, token) => {
-    console.log(token);
     try {
       const res = await axios.get(`/user/by-uid/${uid}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return res.data.user;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return null;
     }
   },
@@ -47,7 +46,7 @@ export const userApi = {
       });
       return res.data.calendar;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       // return null;
     }
   },
@@ -56,7 +55,7 @@ export const userApi = {
       const res = await axios.get(`/user/find-email/${email}`);
       return res.data.users;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return [];
     }
   },

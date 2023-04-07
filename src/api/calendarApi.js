@@ -20,15 +20,5 @@ export const calendarApi = {
     );
     return res.data.calendar;
   },
-  getEventbyCalendarId: async (id, year) => {
-    try {
-      const res = await axios.get(`${calendarRoute}/${id}/${year}`, {
-        Authorization: `Bearer ${accessToken}`,
-      });
-      return res.data;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  },
+ 
 };

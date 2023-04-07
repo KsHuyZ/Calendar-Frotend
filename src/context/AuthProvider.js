@@ -52,9 +52,13 @@ export default function AuthProvider({ children }) {
   }, [socket]);
 
   useEffect(() => {
-    if (!socket.connected) {
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
       handleCheckInternetStatus();
-    }
+    });
+    return () => {
+      socket.off("disconnect");
+    };
   }, [socket]);
 
   useEffect(() => {

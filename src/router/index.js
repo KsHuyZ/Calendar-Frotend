@@ -1,6 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import Login from "../pages/Login/Login";
-import App from "../App";
 import Home from "../pages/Home/Home";
 import AuthProvider from "../context/AuthProvider";
 import ProtectedRoute from "./ProtectedRoute";
@@ -9,6 +8,7 @@ import Header from "../components/Header/Header";
 import SideBar from "../components/SideBar/SideBar";
 import Dashboard from "../pages/DashBoard/Dashboard";
 import { useState } from "react";
+import VideoChat from "../pages/VideoChat/VideoChat";
 const AuthLayout = () => {
   return (
     <AuthProvider>
@@ -48,8 +48,16 @@ export default createBrowserRouter([
                 path: "/",
               },
               {
+                element: <VideoChat />,
+                path:"/video-chat"
+              },
+              {
                 element: <Home />,
                 path: "/:id",
+              },
+              {
+                element: <Home />,
+                path: "/:id/:year/:month/:day",
               },
             ],
           },

@@ -65,6 +65,7 @@ const Header = ({ openSideBar, show }) => {
   useEffect(() => {
     socket.on("new-notify", (notify) => {
       setAllNotifies(pre => [notify, ...pre])
+      setNotifyCount(prev => prev + 1)
       handleShowNewNotify(notify.msg)
     })
     socket.on("accept-success", (invitation) => {
@@ -72,7 +73,7 @@ const Header = ({ openSideBar, show }) => {
 
       setAllNotifies(prev => {
         const index = prev.findIndex(notify => notify._id === invitation._id)
-        let allNotifiesCopy = prev.splice()
+        let allNotifiesCopy = prev.slice()
         allNotifiesCopy[index] = invitation
         if (index >= 0) {
           return allNotifiesCopy

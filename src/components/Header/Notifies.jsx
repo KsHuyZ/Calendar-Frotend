@@ -14,7 +14,6 @@ const Notifies = ({ show, notifies, setNotifies, acceptFunc }) => {
     const [showModal, setShowModal] = useState(false)
     const [event, setEvent] = useState({})
     const handleCheckTimePast = (createdAt) => {
-        console.log(createdAt)
         const now = Date.now()
         const createTime = new Date(createdAt)
         const timePast = now - createTime
@@ -31,7 +30,6 @@ const Notifies = ({ show, notifies, setNotifies, acceptFunc }) => {
 
     }
     const handleAcceptNotifyInvited = (e, id, calendarId, eventId, idUserSend) => {
-        console.log("Listening")
         e.stopPropagation();
         return socket.emit("accept-join", ({ id, calendarId, eventId, receiverId: idUserSend }))
     }
@@ -56,20 +54,17 @@ const Notifies = ({ show, notifies, setNotifies, acceptFunc }) => {
         }
 
 
-        // if (idEvent) {
-        //     const event = await getEventbyId(idEvent)
-        //     console.log(event)
-        //     setEvent(event)
-        //     setShowModal(true)
-        // }
+        if (idEvent) {
+            const event = await getEventbyId(idEvent)
+            setEvent(event)
+            setShowModal(true)
+        }
 
     }
 
     const handleAcceptJoinEvent = async (e, id, idEvent, idUser) => {
         e.stopPropagation();
-        const success = await userAcceptJointoEvent(id, idEvent, idUser)
-        if (success) return acceptFunc(id)
-        return
+        socket.emit("accept-join-event", ({ eventId: idEvent, invitationId: id, receiverId: idUser._id }))
 
     }
 
@@ -90,12 +85,9 @@ const Notifies = ({ show, notifies, setNotifies, acceptFunc }) => {
                 </div>
                 <div className="notifies-map">
                     {notifies.length > 0 ? (
-
-
-
                         notifies.map((notify, index) => (
 
-                            <div className="notify" key={index} onClick={(e) => handleShowEvent(e, notify._id, notify.idEvent, notify.seen)}>
+                            <div className="notify" key={index} onClick={(e) => handleShowEvent(e, notify._id, notify.eventId, notify.seen)}>
                                 <div className="image-send">
                                     <img src={notify.senderId.photoURL} alt="" />
                                 </div>
@@ -109,7 +101,7 @@ const Notifies = ({ show, notifies, setNotifies, acceptFunc }) => {
                                     {notify.status === -1 ? "" : (<div className="action-btns">
                                         {(notify.status === 0 ?
                                             (<>
-                                                <div className="accept-btn" onClick={(e) => handleAcceptNotifyInvited(e, notify._id, notify.calendarId, notify.eventId, notify.senderId)}>
+                                                <div className="accept-btn" onClick={(e) => notify.calendarId ? handleAcceptNotifyInvited(e, notify._id, notify.calendarId, notify.eventId, notify.senderId) : handleAcceptJoinEvent(e, notify._id, notify.eventId, notify.senderId)}>
                                                     <button>Accept</button>
                                                 </div>
                                                 <div className="denied-btn">
