@@ -1,11 +1,10 @@
 import { createClient, createMicrophoneAndCameraTracks } from "agora-rtc-react";
 import { useState, useEffect, useRef } from "react";
-import {useClient,useMicrophoneAndCameraTracks} from "../../config/settings"
+import { useClient, useMicrophoneAndCameraTracks } from "../../config/settings"
 import { Controls } from "../Controlls/Controls";
 import Videos from "../Videos/Videos";
-const config = {
-  mode: "rtc", codec: "vp8",
-};
+import { config } from "../../config/settings"
+import { Grid } from "@mui/material";
 
 export default function VideoCall({ setInCall, channelName }) {
   const [users, setUsers] = useState([]);
@@ -18,13 +17,13 @@ export default function VideoCall({ setInCall, channelName }) {
       console.log("init", name);
       client.on("user-published", async (user, mediaType) => {
         await client.subscribe(user, mediaType);
-        console.log("subscribe success");
         if (mediaType === "video") {
           setUsers((prevUsers) => {
             return [...prevUsers, user];
           });
         }
         if (mediaType === "audio") {
+          console.log("audio type");
           user.audioTrack?.play();
         }
       });
@@ -62,12 +61,16 @@ export default function VideoCall({ setInCall, channelName }) {
   }, [channelName, client, ready, tracks]);
 
   return (
-    <div className="App">
-      {ready && tracks && (
-        <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
-      )}
-      {start && tracks && <Videos users={users} tracks={tracks} />}
-    </div>
+    <Grid container direction="column" style={{ height: "100%" }}>
+      <Grid item style={{ height: "5%" }}>
+        {ready && tracks && (
+          <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
+        )}
+      </Grid>
+      <Grid item style={{ height: "95%" }}>
+        {start && tracks && <Videos users={users} tracks={tracks} />}
+      </Grid>
+    </Grid>
   );
 
 }

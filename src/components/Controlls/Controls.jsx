@@ -1,5 +1,12 @@
 import { useState } from "react";
-import {useClient,useMicrophoneAndCameraTracks} from "../../config/settings"
+import { useClient, useMicrophoneAndCameraTracks } from "../../config/settings"
+import { Button, Grid } from "@mui/material";
+import MicIcon from "@mui/icons-material/MicOutlined"
+import MicOffIcon from "@mui/icons-material/MicOffOutlined"
+import VideocamIcon from "@mui/icons-material/Videocam"
+import VideocamOffIcon from "@mui/icons-material/VideocamOff"
+import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+
 export const Controls = ({
   tracks,
   setStart,
@@ -32,16 +39,35 @@ export const Controls = ({
   };
 
   return (
-    <div className="controls">
-      <p className={trackState.audio ? "on" : ""}
-        onClick={() => mute("audio")}>
-        {trackState.audio ? "MuteAudio" : "UnmuteAudio"}
-      </p>
-      <p className={trackState.video ? "on" : ""}
-        onClick={() => mute("video")}>
-        {trackState.video ? "MuteVideo" : "UnmuteVideo"}
-      </p>
-      {<p onClick={() => leaveChannel()}>Leave</p>}
-    </div>
+    <Grid container spacing={2} alignItems="center">
+      <Grid item>
+        <Button
+          variant="contained"
+          color={trackState.audio ? "primary" : "secondary"}
+          onClick={() => mute("audio")}
+        >
+          {trackState.audio ? <MicIcon /> : <MicOffIcon />}
+        </Button>
+      </Grid>
+      <Grid item>
+        <Button
+          variant="contained"
+          color={trackState.video ? "primary" : "secondary"}
+          onClick={() => mute("video")}
+        >
+          {trackState.video ? <VideocamIcon /> : <VideocamOffIcon />}
+        </Button>
+      </Grid>
+      <Grid item>
+        <Button
+          variant="contained"
+          // color="default"
+          onClick={() => leaveChannel()}
+        >
+          Leave
+          <ExitToAppOutlinedIcon />
+        </Button>
+      </Grid>
+    </Grid>
   );
 };

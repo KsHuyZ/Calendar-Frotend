@@ -76,10 +76,19 @@
         display: flex;
         margin: 0.5em 0;
         align-items: center;
+        &.color {
+          input {
+            width: 100%;
+          }
+        }
         svg {
           display: flex;
           color: #5f6368;
           font-size: 20px;
+        }
+        .right-side {
+          padding-left: 20px;
+          width: 100%;
         }
         &.location {
           position: relative;
@@ -99,7 +108,7 @@
               cursor: pointer;
               display: flex;
               .location {
-                padding-left: 10px;
+                // padding-left: 10px;
               }
             }
           }
@@ -109,8 +118,7 @@
         justify-content: flex-end;
       }
       .file .input-file {
-        width: 90%;
-        margin-left: 20px;
+        // width: 90%;
         border: 1px solid #5f6368;
         cursor: pointer;
         position: relative;
@@ -119,10 +127,12 @@
           top: 0;
           left: 10px;
           color: #5f6368;
+          z-index: -1;
         }
         input {
           width: 100%;
           opacity: 0;
+          cursor: pointer;
         }
       }
     }
@@ -130,6 +140,5 @@
 }
 
 .ck-edit {
-  width: 90%;
-  margin-left: 20px;
+  width: 99%;
 }

@@ -4,6 +4,7 @@ import { RiCloseFill } from "react-icons/ri"
 import { AiOutlineClockCircle } from 'react-icons/ai'
 import { TbFileDescription } from "react-icons/tb"
 import { MdAttachFile } from 'react-icons/md'
+import { HiOutlineVideoCamera } from "react-icons/hi2"
 import { IoColorPaletteOutline } from "react-icons/io5"
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
@@ -11,23 +12,28 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FaMapMarkerAlt } from "react-icons/fa"
 import { Map } from "../../services/goong"
-import axios from "axios";
 import showSuggest from "../../hooks/showSuggest";
 import getLocation from "../../hooks/getLocation";
-
+import { fileUpload } from "../../utils/FileUpload";
+import LinearProgress from '@mui/material/LinearProgress';
+import Button from '@mui/material/Button';
 
 const Modal = ({ add, close, start, end, show }) => {
 
   const titleRef = useRef()
   const colorRef = useRef()
   const [description, setDescription] = useState("")
+  const [isMeeting, setIsMeeting] = useState(false)
   const [showMap, setShowMap] = useState(false)
+  const [file, setFile] = useState()
   const [location, setLocation] = useState({
     lat: 21.0520876,
     lng: 105.8065815
   })
   const [currentLocation, setCurrentLocation] = useState("")
   const [suggests, setSuggests] = useState([])
+  const [isUpload, setIsUpload] = useState(false)
+
   const handleSubmit = async () => {
     const title = titleRef.current.value
     const color = colorRef.current.value
@@ -36,7 +42,11 @@ const Modal = ({ add, close, start, end, show }) => {
     const locationObject = {
       address: currentLocation, latitude: location.lat, longitude: location.lng
     }
-    add(title, color, description, start, end, locationObject)
+    const fileObject = {
+      fileName: file.original_filename,
+      fileUrl: file.secure_url
+    }
+    add(title, color, description, start, end, locationObject, fileObject, isMeeting)
     close(false)
     setShowMap(false)
     handleCloseModal()
@@ -66,10 +76,17 @@ const Modal = ({ add, close, start, end, show }) => {
     titleRef.current.value = ""
     colorRef.current.value = "#3174ad"
     setDescription("")
-
+    setIsMeeting(false)
   }
 
-  // console.log(handleSetLocation())
+  const handleUploadFile = async (file) => {
+    setIsUpload(true)
+    const url = await fileUpload(file)
+    setIsUpload(false)
+    setFile(url)
+  }
+
+
   return <div className={`background ${show ? "show" : ""}`} >
     <div className="map">
       {showMap ? <Map long={location.lng} lat={location.lat} /> : ""}
@@ -86,56 +103,71 @@ const Modal = ({ add, close, start, end, show }) => {
         </div>
         <div className="time row">
           < AiOutlineClockCircle />
+
           <div className="time-start-end" style={{ marginLeft: 20 }}>
             {dayjs(start).format("DD/MM/YYYY")} - {dayjs(end).format("DD/MM/YYYY")}
           </div>
         </div>
         <div className="description row">
           <TbFileDescription title="description" />
-          <div className="ck-edit" >
-            <CKEditor
+          <div className="right-side">
+            <div className="ck-edit" >
+              <CKEditor
 
-              config={{ placeholder: "Event description" }}
-              editor={ClassicEditor}
-              data={description}
-              onReady={editor => {
-                // You can store the "editor" and use when it is needed.
-                // console.log('Editor is ready to use!', editor);
-              }}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                setDescription(data)
-                // console.log({ event, editor, data });
-              }}
-              onBlur={(event, editor) => {
-                // console.log('Blur.', editor);
-              }}
-              onFocus={(event, editor) => {
-                // console.log('Focus.', editor);
-              }}
-            />
+                config={{ placeholder: "Event description" }}
+                editor={ClassicEditor}
+                data={description}
+                onReady={editor => {
+                  // You can store the "editor" and use when it is needed.
+                  // console.log('Editor is ready to use!', editor);
+                }}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setDescription(data)
+                  // console.log({ event, editor, data });
+                }}
+                onBlur={(event, editor) => {
+                  // console.log('Blur.', editor);
+                }}
+                onFocus={(event, editor) => {
+                  // console.log('Focus.', editor);
+                }}
+              />
+            </div>
           </div>
         </div>
         <div className="file row">
           <MdAttachFile />
-          <div className="input-file">
-            <input type="file" name="" id="" />
-            <span className="title">Drop your file there</span>
+          <div className="right-side">
+            <div className="input-file">
+              <input type="file" name="" id="" onChange={(e) => handleUploadFile(e.target.files[0])} />
+              <span className="title">{file ? file.original_filename : "Drop your file there"}</span>
+              {isUpload && <LinearProgress color="secondary" />}
+            </div>
           </div>
-
         </div>
         <div className="color row">
           <IoColorPaletteOutline />
-          <input type="color" name="" id="" style={{ width: "90%", marginLeft: 20 }} ref={colorRef} defaultValue="#3174ad" />
+          <div className="right-side">
+            <input type="color" name="" id="" ref={colorRef} defaultValue="#3174ad" />
+          </div>
+        </div>
+        <div className="ismeeting row">
+          <HiOutlineVideoCamera />
+          <div className="right-side">
+            {isMeeting ? "Meeting is created" : <Button variant="contained" onClick={() => setIsMeeting(true)}>Create online meeting</Button>}
+          </div>
         </div>
         <div className="location row">
           <FaMapMarkerAlt />
 
-          <TextField id="filled-basic" label="Location" variant="filled" fullWidth style={{ marginLeft: 13 }} size={"small"} onFocus={() => setShowMap(true)} onBlur={() => {
-            if (location.length > 0) {
-              setShowMap(false)
-            }
-          }} onChange={handleShowSuggest} value={currentLocation} />
+          <div className="right-side">
+            <TextField id="filled-basic" label="Location" variant="filled" fullWidth size={"small"} onFocus={() => setShowMap(true)} onBlur={() => {
+              if (location.length > 0) {
+                setShowMap(false)
+              }
+            }} onChange={handleShowSuggest} value={currentLocation} />
+          </div>
           <div className="dropdown">
             {suggests.map(suggest => (
               <div className="dropdown-row" onClick={() => handleSetLocation(suggest["place_id"])}>
@@ -147,15 +179,11 @@ const Modal = ({ add, close, start, end, show }) => {
               </div>
             ))}
           </div>
-
-
         </div>
       </div>
-
       <div className="button" onClick={handleSubmit}>
-        <button >Submit</button>
+        <button>Submit</button>
       </div>
-
     </div>
   </div>;
 };

@@ -20,7 +20,6 @@ import { toast } from "react-toastify";
 import { Map } from "../../services/goong";
 import { BsChatRightText } from "react-icons/bs";
 import { eventApi } from "../../api/eventApi";
-import { agoraApi } from "../../api/agoraApi"
 const now = () => new Date();
 
 function isEmpty(obj) {
@@ -51,7 +50,6 @@ const Home = () => {
   const [permission, setPermission] = useState(false);
   const { user, setProgress } = useContext(AuthContext);
   const { getEventbyCalendarId } = eventApi;
-  const { createTokenRoom } = agoraApi
   const [loaded, setLoaded] = useState(false);
   const [userOnline, setUserOnline] = useState([]);
   const { id, year, month, day } = useParams();
@@ -108,7 +106,9 @@ const Home = () => {
     description,
     start,
     end,
-    location
+    location,
+    file,
+    isMeeting
   ) => {
     const event = {
       title,
@@ -118,9 +118,10 @@ const Home = () => {
       start,
       end,
       location: location,
+      file,
+      isMeeting
     };
     socket.emit("create-event", event);
-    console.log("yo is just only one");
     notifyLoading("Creating...");
   };
 
@@ -191,7 +192,6 @@ const Home = () => {
   }, [socket]);
 
   useEffect(() => {
-    createTokenRoom()
     handleGetMySchedule();
   }, [user, id]);
 

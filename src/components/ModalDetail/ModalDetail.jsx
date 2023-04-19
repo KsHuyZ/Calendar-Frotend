@@ -7,24 +7,27 @@ import { TbFileDescription, TbCalendarEvent } from 'react-icons/tb'
 import { FaMapMarkerAlt } from "react-icons/fa"
 import { VscFilePdf } from "react-icons/vsc"
 import { AiOutlineTeam } from "react-icons/ai"
+import { BsFileEarmarkBinary } from "react-icons/bs"
 import ModalShare from '../ModalShare/ModalShare'
 import { Map } from '../../services/goong'
 import ModalDelete from '../ModalDelete/ModalDelete'
+import Button from '@mui/material/Button';
+import { HiOutlineVideoCamera } from "react-icons/hi2"
+import ModalViewFile from '../ModalViewFile/ModalViewFile'
 
 const ModalDetail = ({ close, event, dele, show }) => {
-  const { _id, title, start, end, createdBy, description, backgroundColor, location, userJoin } = event
+  const { _id, title, start, end, createdBy, description, backgroundColor, location, userJoin, file, isMeeting } = event
   const [showOption, setShowOption] = useState(false)
   const [showModal, setShowModal] = useState({
     modalShare: false,
     modalDelete: false
   })
+  const [showFile, setShowFile] = useState(false)
   // const [showMap, setShowMap] = useState(false)
   const handleDelete = () => {
     close(false)
     dele(_id)
   }
-
-
 
   return (
     <div className={`background ${show ? "show" : ""}`} >
@@ -75,8 +78,25 @@ const ModalDetail = ({ close, event, dele, show }) => {
             <FaMapMarkerAlt />
             <div className="right-side location">
               {location?.address}
+
             </div>
           </div> : null}
+
+          {isMeeting ? <div className='row meeting'>
+            <HiOutlineVideoCamera />
+            <div className="right-side location">
+              <Button variant="contained">Join meeting</Button>
+            </div>
+          </div> : null}
+          {
+            file ? <div className="row file">
+              <BsFileEarmarkBinary />
+              <div className="right-side file">
+                {file.fileName}
+                <Button variant="contained" onClick={() => setShowFile(true)}>View</Button>
+              </div>
+            </div> : null
+          }
           {
             userJoin?.length > 0 ?
               <div className="row team">
@@ -91,6 +111,7 @@ const ModalDetail = ({ close, event, dele, show }) => {
         </div>
 
       </div>
+      {showFile ? ModalViewFile(file.fileUrl) : null}
     </div>
 
   )

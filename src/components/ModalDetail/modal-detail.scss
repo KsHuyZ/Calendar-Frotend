@@ -1,5 +1,5 @@
 .modal-detail {
-  margin: 30vh auto;
+  margin: 20vh auto;
   background-color: white;
   width: 36vw;
   z-index: 21;
@@ -78,7 +78,9 @@
           font-size: 25px;
         }
       }
-      .description {
+      .file {
+        display: flex;
+        align-items: center;
       }
       svg {
         cursor: pointer;
@@ -95,6 +97,10 @@
         -webkit-line-clamp: 2; /* number of lines to show */
         line-clamp: 2;
         -webkit-box-orient: vertical;
+        &.file {
+          display: flex;
+          justify-content: space-between;
+        }
       }
     }
   }
