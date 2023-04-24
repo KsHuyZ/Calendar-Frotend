@@ -1,6 +1,31 @@
 .background {
-    iframe {
-        width: 100%;
-        height: 50vh;
+  .modal {
+    .title-bar {
+      display: flex;
+      padding: 10px 20px;
+      align-items: center;
+      font-size: 15px;
+      justify-content: flex-end;
+      svg {
+        cursor: pointer;
+        font-size: 37px;
+      }
+      .title {
+        padding-left: 15px;
+      }
     }
+    .not-support {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  embed {
+    width: 100%;
+    height: 70vh;
+  }
+  iframe {
+    width: 99%;
+    height: 70vh;
+  }
 }

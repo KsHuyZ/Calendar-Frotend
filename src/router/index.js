@@ -8,7 +8,7 @@ import Header from "../components/Header/Header";
 import SideBar from "../components/SideBar/SideBar";
 import Dashboard from "../pages/DashBoard/Dashboard";
 import { useState } from "react";
-import VideoChat from "../pages/VideoChat/VideoChat";
+import VideoChat from "../components/VideoChat/VideoChat";
 const AuthLayout = () => {
   return (
     <AuthProvider>
@@ -49,7 +49,7 @@ export default createBrowserRouter([
               },
               {
                 element: <VideoChat />,
-                path:"/video-chat"
+                path:"/video-chat/:channelName"
               },
               {
                 element: <Home />,

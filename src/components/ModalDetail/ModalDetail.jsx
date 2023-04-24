@@ -14,6 +14,7 @@ import ModalDelete from '../ModalDelete/ModalDelete'
 import Button from '@mui/material/Button';
 import { HiOutlineVideoCamera } from "react-icons/hi2"
 import ModalViewFile from '../ModalViewFile/ModalViewFile'
+import { useNavigate } from 'react-router-dom'
 
 const ModalDetail = ({ close, event, dele, show }) => {
   const { _id, title, start, end, createdBy, description, backgroundColor, location, userJoin, file, isMeeting } = event
@@ -23,10 +24,16 @@ const ModalDetail = ({ close, event, dele, show }) => {
     modalDelete: false
   })
   const [showFile, setShowFile] = useState(false)
-  // const [showMap, setShowMap] = useState(false)
+
+  const navigate = useNavigate()
+
   const handleDelete = () => {
     close(false)
     dele(_id)
+  }
+
+  const handleJoinMeeting = () => {
+    navigate(`/video-chat/${_id}`)
   }
 
   return (
@@ -85,14 +92,14 @@ const ModalDetail = ({ close, event, dele, show }) => {
           {isMeeting ? <div className='row meeting'>
             <HiOutlineVideoCamera />
             <div className="right-side location">
-              <Button variant="contained">Join meeting</Button>
+              <Button variant="contained" onClick={handleJoinMeeting}>Join meeting</Button>
             </div>
           </div> : null}
           {
             file ? <div className="row file">
               <BsFileEarmarkBinary />
               <div className="right-side file">
-                {file.fileName}
+                <span style={{ width: 100, overflow: "hidden", lineClamp: 1 }}>{file.fileName}</span>
                 <Button variant="contained" onClick={() => setShowFile(true)}>View</Button>
               </div>
             </div> : null
@@ -111,7 +118,7 @@ const ModalDetail = ({ close, event, dele, show }) => {
         </div>
 
       </div>
-      {showFile ? ModalViewFile(file.fileUrl) : null}
+      {showFile ? <ModalViewFile url={file.fileUrl} fileName={file.fileName} close={() => setShowFile(false)} /> : null}
     </div>
 
   )
