@@ -1,11 +1,12 @@
 import axios from "../lib/axios";
 import { notfifyError, notifySuccess } from "../lib/toastify";
 
+const userRoute = "user";
+
 export const userApi = {
-  authByGoogle: async (uid, displayName, email, photoURL) => {
+  authByGoogle: async (displayName, email, photoURL) => {
     try {
       const res = await axios.post("/user/gg-auth", {
-        uid,
         displayName,
         email,
         photoURL,
@@ -13,7 +14,7 @@ export const userApi = {
       const { data } = res;
       if (data.success) {
         notifySuccess("Login success");
-        return true;
+        return data;
       }
       // socket.emit("");
     } catch (error) {
@@ -58,5 +59,47 @@ export const userApi = {
       // console.log(error);
       return [];
     }
+  },
+  registerUser: async (userName, email, password, phoneNumber, file) => {
+    const formData = new FormData();
+    formData.append("userName", userName);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("file", file);
+    try {
+      const res = await axios.post(`/${userRoute}/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res.data);
+      if (res.data.success) return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  login: async (email, password) => {
+    try {
+      const res = await axios.post(`/${userRoute}/login`, {
+        email,
+        password,
+      });
+      const accessToken = res.data.accessToken;
+      const refreshToken = res.data.refreshToken;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      notifySuccess("Login success");
+      return res.data.user;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  authorize: async () => {
+    const res = await axios.get("/auth/authorize");
+    return res.data;
   },
 };

@@ -5,17 +5,16 @@ import { userApi } from "../api/userApi";
 import LoadingBar from "react-top-loading-bar";
 import socket from "../config/socket";
 // import io from "socket.io-client";
-import { serverHost } from "../config/serverHost";
-import { notfifyError, notifyOffline, notifySuccess } from "../lib/toastify";
 
+import { notifyOffline, notifySuccess } from "../lib/toastify";
+import isEmpty from "../utils/isEmptyObj";
 export const AuthContext = createContext();
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState({});
   const [progress, setProgress] = useState(0);
-
   const [status, setStatus] = useState(window.navigator.onLine);
-  const { getUserbyUid } = userApi;
+  const { authorize } = userApi;
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -40,6 +39,17 @@ export default function AuthProvider({ children }) {
     }
   };
 
+  const handleGetUser = async () => {
+    const res = await authorize();
+    if (res) {
+      setUser(res.user);
+      return;
+    }
+    setUser({});
+    localStorage.clear();
+    return navigate("/login");
+  };
+
   useEffect(() => {
     socket.on("connect", function () {
       socket.emit("authenticate", {
@@ -62,29 +72,18 @@ export default function AuthProvider({ children }) {
   }, [socket]);
 
   useEffect(() => {
-    const unsubcribed = auth.onIdTokenChanged(async (user) => {
-      if (user?.uid) {
-        localStorage.setItem("accessToken", user.accessToken);
-        const res = await getUserbyUid(user.uid, user.accessToken);
-        if (res?._id) {
-          setUser(res);
-          socket.emit("create-user", {
-            id: res?._id,
-            userName: res?.userName,
-            photoURL: res?.photoURL,
-          });
-        }
-        return;
-      }
-      setUser({});
-      localStorage.clear();
-      return navigate("/login");
-    });
+    handleGetUser();
+  }, []);
 
-    return () => {
-      unsubcribed();
-    };
-  }, [auth]);
+  useEffect(() => {
+    if (!isEmpty(user)) {
+      socket.emit("create-user", {
+        id: user._id,
+        userName: user.userName,
+        photoURL: user.photoURL,
+      });
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider
@@ -95,6 +94,8 @@ export default function AuthProvider({ children }) {
         progress,
         handleCheckInternetStatus,
         status,
+        auth,
+        // setIsLogin()
       }}
     >
       <LoadingBar

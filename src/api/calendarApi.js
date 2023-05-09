@@ -1,6 +1,6 @@
 import axios from "../lib/axios";
 const calendarRoute = "calendar";
-const accessToken = localStorage.getItem("accessToken");
+
 export const calendarApi = {
   createCalendar: async (calendarName, description, imagePreview, ownerId) => {
     const formData = new FormData();
@@ -14,11 +14,10 @@ export const calendarApi = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${accessToken}`,
+          // Authorization: `Bearer ${accessToken}`,
         },
       }
     );
     return res.data.calendar;
   },
- 
 };

@@ -8,8 +8,10 @@
     .user {
       width: 50px;
       img {
+        height: 35px;
         width: 70%;
         border-radius: 50px;
+        object-fit: cover;
       }
     }
   }

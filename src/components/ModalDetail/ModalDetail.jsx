@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import { HiOutlineVideoCamera } from "react-icons/hi2"
 import ModalViewFile from '../ModalViewFile/ModalViewFile'
 import { useNavigate } from 'react-router-dom'
+import dayjs from 'dayjs'
 
 const ModalDetail = ({ close, event, dele, show }) => {
   const { _id, title, start, end, createdBy, description, backgroundColor, location, userJoin, file, isMeeting } = event
@@ -68,7 +69,7 @@ const ModalDetail = ({ close, event, dele, show }) => {
             </div>
             <div className="right-side title-day">
               <div className="title">{title}</div>
-              <div className="day">{new Date(start).toDateString()} - {new Date(end).toDateString()}</div>
+              <div className="day">{dayjs(start).isSame(dayjs(end).subtract(1, 'day')) ? dayjs(start).format("DD/MM/YYYY") : `${dayjs(start).format("DD/MM/YYYY")} - ${dayjs(end).format("DD/MM/YYYY")} `}</div>
             </div>
           </div>
           <div className="row description">

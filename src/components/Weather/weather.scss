@@ -1,0 +1,24 @@
+.card-weather-container {
+  width: 300px;
+  .card-weather {
+    // width: 20px;
+    height: auto;
+    .card {
+      display: flex;
+      background-color: #e6e6e6;
+      padding: 10px;
+      border-radius: 5px;
+      justify-content: space-between;
+      align-items: center;
+      .weather-type {
+        font-size: 30px;
+      }
+      .image-weather {
+        width: 50px;
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

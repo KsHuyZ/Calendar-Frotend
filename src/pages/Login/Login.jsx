@@ -2,27 +2,71 @@ import React, { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import "./user-auth.css"
 import { RiGoogleFill } from "react-icons/ri"
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from 'firebase/auth'
 import { AuthContext } from '../../context/AuthProvider'
 import { userApi } from '../../api/userApi'
+import { useState } from 'react'
+import Register from './Register'
+import { notfifyError } from '../../lib/toastify'
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const Login = () => {
   const auth = getAuth()
   const navigate = useNavigate()
-  const { user } = useContext(AuthContext)
+  const { authByGoogle, login } = userApi
+  const [isLoginForm, setIsLoginForm] = useState(true)
+  const [preview, setPreview] = useState(null)
+  const [formValue, setFormValue] = useState({
+    email: "",
+    pasword: ""
+  })
+  const [loading, setLoading] = useState(false)
+  const [loadingGG, setLoadingGG] = useState(false)
+  const { setUser } = useContext(AuthContext);
+
+  const handleInputChange = (e) => {
+    const name = e.target.name
+    const value = e.target.value
+    setFormValue({ ...formValue, [name]: value })
+  }
 
   const handleLoginWithGoogle = async () => {
-    const { authByGoogle } = userApi
+    setLoadingGG(true)
     const provider = new GoogleAuthProvider()
     try {
       const res = await signInWithPopup(auth, provider)
-      const { uid, displayName, email, photoURL } = res.user
-      const success = await authByGoogle(uid, displayName, email, photoURL)
-      if (success) return navigate("/")
+      const { displayName, email, photoURL } = res.user
+      const success = await authByGoogle(displayName, email, photoURL)
+      if (success) {
+        setUser(success.user);
+        localStorage.setItem("accessToken", success.accessToken)
+        localStorage.setItem("refreshToken", success.refreshToken)
+        return navigate("/")
+      }
     } catch (error) {
       console.log(error)
     }
+    setLoadingGG(false)
 
+  }
+
+  const handleLoginWithFacebook = async () => {
+    const provider = new FacebookAuthProvider()
+    const res = await signInWithPopup(auth, provider)
+    console.log(res)
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const res = await login(formValue.email, formValue.password)
+    setLoading(false)
+
+    if (res) {
+      setUser(res)
+      return navigate("/")
+    }
+    notfifyError("Login failed")
   }
 
   return (
@@ -37,34 +81,33 @@ const Login = () => {
               </div>
               <div className="user-form-group">
                 <ul className="user-form-social">
-                  <li><Link to="#" className="facebook"><i className="fab fa-facebook-f"></i>Đăng nhập với Facebook</Link></li>
+                  <li><Link to="#" className="facebook"><i className="fab fa-facebook-f" onClick={handleLoginWithFacebook}></i>Đăng nhập với Facebook</Link></li>
                   <li><Link to="#" className="google" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={handleLoginWithGoogle}>
                     <RiGoogleFill style={{ fontSize: 20, marginRight: 5 }} /> Đăng nhập với Google
                   </Link></li>
-
+                  {!isLoginForm && preview ? <li><img style={{ width: 300 }} src={preview} alt="" /> </li> : null}
                 </ul>
                 <div className="user-form-divider">
                   <p>or</p>
                 </div>
-                <form className="user-form" >
+                {isLoginForm ? <form className="user-form" onSubmit={handleLogin} >
                   <div className="form-group">
-                    <div className="emty-name">
-                    </div>
                     <input type="email" name="email" id="email" className="form-control"
-                      placeholder="Type email" />
+                      placeholder="Type email" onChange={handleInputChange} />
                   </div>
                   <div className="form-group"><input type="password" id="password" name="password" className="form-control"
-                    placeholder="Type password" /></div>
+                    placeholder="Type password" onChange={handleInputChange} />
+                  </div>
 
                   <div className="form-button">
-                    <button type="submit" >Log in</button>
+                    <LoadingButton type="submit" loading={loading} variant="contained" >Log in</LoadingButton>
                     <p>Forgot password?<Link id="reset">Reset</Link></p>
                   </div>
-                </form>
+                </form> : <Register setPreview={setPreview} />}
               </div>
             </div>
             <div className="user-form-remind">
-              <p>Haven't account?<Link to="/register">Register now</Link></p>
+              {isLoginForm ? <p>Haven't account?<Link to="#" onClick={() => setIsLoginForm(false)}>Register now</Link></p> : <p>Already have an account<Link to="#" onClick={() => setIsLoginForm(true)}>Login now</Link></p>}
             </div>
           </div>
         </div>

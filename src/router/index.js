@@ -9,6 +9,7 @@ import SideBar from "../components/SideBar/SideBar";
 import Dashboard from "../pages/DashBoard/Dashboard";
 import { useState } from "react";
 import VideoChat from "../components/VideoChat/VideoChat";
+import Todo from "../pages/Todo/Todo";
 const AuthLayout = () => {
   return (
     <AuthProvider>
@@ -49,7 +50,7 @@ export default createBrowserRouter([
               },
               {
                 element: <VideoChat />,
-                path:"/video-chat/:channelName"
+                path: "/video-chat/:channelName",
               },
               {
                 element: <Home />,
@@ -58,6 +59,10 @@ export default createBrowserRouter([
               {
                 element: <Home />,
                 path: "/:id/:year/:month/:day",
+              },
+              {
+                element: <Todo />,
+                path: "/todo",
               },
             ],
           },

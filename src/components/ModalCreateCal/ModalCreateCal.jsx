@@ -31,7 +31,7 @@ const ModalCreateCal = ({ show, close, newCalendar }) => {
             return
         }
         try {
-            const calendar =await notifyPending("Creating...", createCalendar(name, description, imagePreview, _id), "Created", "Created Error")
+            const calendar = await notifyPending("Creating...", createCalendar(name, description, imagePreview, _id), "Created", "Created Error")
             if (calendar) {
                 newCalendar(prev => [...prev, calendar])
             }
@@ -40,7 +40,7 @@ const ModalCreateCal = ({ show, close, newCalendar }) => {
             console.log(error)
         }
 
-
+        close()
     }
     return (
         <div className={`background ${show ? "show" : ""}`}>

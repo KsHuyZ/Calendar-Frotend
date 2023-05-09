@@ -9,6 +9,7 @@ import { AuthContext } from '../../context/AuthProvider'
 import { Link, NavLink } from 'react-router-dom'
 import { AiOutlinePlusCircle } from "react-icons/ai"
 import ModalCreateCal from '../ModalCreateCal/ModalCreateCal'
+import { MdOutlineAttachMoney } from 'react-icons/md'
 import socket from '../../config/socket'
 
 const NAV__LINKS = [
@@ -17,7 +18,16 @@ const NAV__LINKS = [
     url: "/",
     icon: <TbHome2 />
   },
-
+  {
+    display: "Donate",
+    url: "/donate",
+    icon: <MdOutlineAttachMoney />
+  },
+  {
+    display: "Todo",
+    url: "/todo",
+    icon: <MdOutlineAttachMoney />
+  }
 ];
 
 

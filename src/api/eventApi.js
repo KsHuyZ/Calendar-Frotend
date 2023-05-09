@@ -1,10 +1,10 @@
 import axios from "../lib/axios";
 const eventRoute = "event";
-const accessToken = localStorage.getItem("accessToken");
+
 export const eventApi = {
   getEventbyId: async (id) => {
     try {
-      const res = await axios.get(`/${eventRoute}/${id}`);
+      const res = await axios.get(`/${eventRoute}/${id}`, {});
       return res.data.event;
     } catch (error) {
       console.log(error);
@@ -25,9 +25,7 @@ export const eventApi = {
   },
   getEventbyCalendarId: async (id, year) => {
     try {
-      const res = await axios.get(`${eventRoute}/${id}/${year}`, {
-        Authorization: `Bearer ${accessToken}`,
-      });
+      const res = await axios.get(`${eventRoute}/${id}/${year}`);
       return res.data;
     } catch (error) {
       console.log(error);

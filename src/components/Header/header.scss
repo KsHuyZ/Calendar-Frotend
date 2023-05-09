@@ -118,6 +118,8 @@
         img {
           width: 100%;
           border-radius: 50px;
+          height: 40px;
+          object-fit: cover;
         }
       }
     }
@@ -147,6 +149,8 @@
           width: 40%;
           display: flex;
           justify-content: space-between;
+          height: 100px;
+          overflow-y: scroll;
           .all {
             cursor: pointer;
           }
@@ -155,6 +159,8 @@
           }
         }
         .notifies-map {
+          height: 70vh;
+          overflow-y: scroll;
           .notify {
             margin: 10px 0;
             display: flex;

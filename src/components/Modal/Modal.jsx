@@ -105,7 +105,7 @@ const Modal = ({ add, close, start, end, show }) => {
           < AiOutlineClockCircle />
 
           <div className="time-start-end" style={{ marginLeft: 20 }}>
-            {dayjs(start).format("DD/MM/YYYY")} - {dayjs(end).format("DD/MM/YYYY")}
+            {dayjs(start).isSame(dayjs(end).subtract(1, 'day')) ? dayjs(start).format("DD/MM/YYYY") : `${dayjs(start).format("DD/MM/YYYY")} - ${dayjs(end).format("DD/MM/YYYY")} `}
           </div>
         </div>
         <div className="description row">

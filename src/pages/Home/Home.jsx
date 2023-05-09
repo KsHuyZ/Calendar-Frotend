@@ -80,11 +80,16 @@ const Home = () => {
           socket.emit("join-schedule", id);
           setLoaded(true);
           return setProgress(100);
+        } else {
+          setPermission(false);
+          setProgress(100);
+          return setLoaded(true)
         }
       }
       setAllEvents([]);
       return setProgress(100);
     } catch (error) {
+      console.log(error)
       setPermission(false);
       setProgress(100);
     }
@@ -132,6 +137,7 @@ const Home = () => {
     });
 
     socket.on("delete-success", (id) => {
+      console.log("delete", id)
       setAllEvents((pre) => pre.filter((event) => event._id !== id));
       update("Deleted", "success");
     });

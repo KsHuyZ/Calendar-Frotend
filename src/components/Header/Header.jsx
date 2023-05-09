@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import "./header.scss"
-import { AiOutlineSearch } from "react-icons/ai"
 import { IoMdNotificationsOutline } from "react-icons/io"
 import { AuthContext } from "../../context/AuthProvider"
 import { Menu, MenuItem } from "@mui/material";
@@ -10,15 +9,20 @@ import Notifies from "./Notifies";
 import logo from "../../assets/images/logo.svg"
 import socket from "../../config/socket";
 import { FcCalendar } from "react-icons/fc"
+import { useNavigate } from "react-router-dom";
 const Header = ({ openSideBar, show }) => {
 
-  const { user: { userName, photoURL, auth, _id } } = useContext(AuthContext)
+  const { user: { userName, photoURL, _id }, auth, } = useContext(AuthContext)
   const [anchorEl, setAnchoEl] = useState(null)
   const [allNotifies, setAllNotifies] = useState([])
   const [showNotify, setShowNotify] = useState(false)
   const [notifyCount, setNotifyCount] = useState()
+
+  const { setUser } = useContext(AuthContext);
+
   const open = Boolean(anchorEl)
   const { getNotifiesbyUserId, checkAllNotify } = notifyApi
+  const navigate = useNavigate()
 
   const handleGetNotify = async (id) => {
     const notifies = await getNotifiesbyUserId(id)
@@ -98,6 +102,10 @@ const Header = ({ openSideBar, show }) => {
 
   const handleLogout = () => {
     auth.signOut()
+    localStorage.clear()
+    setUser({})
+    socket.disconnect()
+    navigate("/login")
   }
 
 
@@ -167,10 +175,12 @@ const Header = ({ openSideBar, show }) => {
           </div>
           <div className="avatar" >
             <img src={photoURL} alt="" />
+            <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={() => setAnchoEl(null)}>
+              <MenuItem onClick={handleLogout}>Profile</MenuItem>
+              <MenuItem onClick={handleLogout}>Log out</MenuItem>
+            </Menu>
           </div>
-          <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={() => setAnchoEl(null)}>
-            <MenuItem onClick={handleLogout}>Log out</MenuItem>
-          </Menu>
+
         </div>
       </div>
     </div>
