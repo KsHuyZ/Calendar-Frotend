@@ -145,6 +145,11 @@ const Header = ({ openSideBar, show }) => {
     }
     setNotifyCount(0)
   }
+
+  const handleRedirectSettings = () => {
+    navigate("/settings/profile")
+    setAnchoEl(null)
+  }
   return (
     <div className="menu-header">
       <div className="left-side">
@@ -176,7 +181,7 @@ const Header = ({ openSideBar, show }) => {
           <div className="avatar" >
             <img src={photoURL} alt="" />
             <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={() => setAnchoEl(null)}>
-              <MenuItem onClick={handleLogout}>Profile</MenuItem>
+              <MenuItem onClick={handleRedirectSettings}>Profile</MenuItem>
               <MenuItem onClick={handleLogout}>Log out</MenuItem>
             </Menu>
           </div>

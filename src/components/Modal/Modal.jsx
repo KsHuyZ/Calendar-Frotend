@@ -86,12 +86,26 @@ const Modal = ({ add, close, start, end, show }) => {
     setFile(url)
   }
 
+  const handleShowDate = (start, end) => {
+    const dateStart = new Date(start)
+    const dateEnd = new Date(end)
+    const startTime = dateStart.getHours() + ':' + dateStart.getMinutes();
+    const endTime = dateEnd.getHours() + ':' + dateEnd.getMinutes();
+    if (dateStart.getDate() === dateEnd.getDate() && dateStart.getMonth() === dateEnd.getMonth()) {
+      return `${dayjs(start).format("DD/MM/YYYY")} ${startTime} - ${endTime}`
+    }
+    if (dayjs(start).isSame(dayjs(end).subtract(1, 'day'))) {
+      return dayjs(start).format("DD/MM/YYYY")
+    } else {
+      return `${dayjs(start).format("DD/MM/YYYY")} - ${dayjs(end).format("DD/MM/YYYY")}`
+    }
 
-  return <div className={`background ${show ? "show" : ""}`} >
+  }
+  return <div className={`background ${show ? "show" : ""} `} >
     <div className="map">
       {showMap ? <Map long={location.lng} lat={location.lat} /> : ""}
     </div>
-    <div className={`modal ${show ? "show" : ""}`} style={showMap ? { left: "5%" } : null}>
+    <div className={`modal ${show ? "show" : ""} `} style={showMap ? { left: "5%" } : null}>
       <div className="header">
         <div className="close-btn" >
           <RiCloseFill onClick={handleCloseModal} />
@@ -102,10 +116,10 @@ const Modal = ({ add, close, start, end, show }) => {
           <TextField id="standard-basic" label="Event title" variant="standard" style={{ width: "90%" }} inputRef={titleRef} autoFocus={show} />
         </div>
         <div className="time row">
-          < AiOutlineClockCircle />
+          <AiOutlineClockCircle />
 
           <div className="time-start-end" style={{ marginLeft: 20 }}>
-            {dayjs(start).isSame(dayjs(end).subtract(1, 'day')) ? dayjs(start).format("DD/MM/YYYY") : `${dayjs(start).format("DD/MM/YYYY")} - ${dayjs(end).format("DD/MM/YYYY")} `}
+            {handleShowDate(start, end)}
           </div>
         </div>
         <div className="description row">
@@ -113,7 +127,6 @@ const Modal = ({ add, close, start, end, show }) => {
           <div className="right-side">
             <div className="ck-edit" >
               <CKEditor
-
                 config={{ placeholder: "Event description" }}
                 editor={ClassicEditor}
                 data={description}

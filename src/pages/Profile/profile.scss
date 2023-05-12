@@ -1,0 +1,78 @@
+.profile-section {
+  width: 70vw;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  margin: auto;
+  border-radius: 5px;
+  .profile {
+    display: flex;
+    flex-direction: column;
+    .settings {
+      padding: 10px;
+      border-bottom: 1px solid #efefef;
+      .setting-header {
+        .heading {
+          padding: 10px;
+        }
+      }
+    }
+    .profile-main {
+      display: flex;
+      justify-content: space-between;
+      .profile-left {
+        width: 30%;
+        border-right: 1px solid #efefef;
+        .navbar {
+          padding: 10px;
+
+          .item {
+            padding: 10px 0 10px 10px;
+            width: 100%;
+            color: black;
+            &.active {
+              background-color: #f2f8ff;
+              .title-item {
+                font-weight: bold;
+              }
+            }
+            .title-item {
+              &:hover {
+                color: #096dd9;
+              }
+            }
+          }
+        }
+      }
+      .profile-right {
+        width: 65%;
+        .avatar {
+          width: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          img {
+            width: 113px;
+            height: 110px;
+            border-radius: 90px;
+            object-fit: cover;
+          }
+        }
+        .profile-infor {
+          margin-bottom: 30px;
+          .form-group {
+            .title {
+              font-weight: bold;
+            }
+            input {
+              width: 90%;
+            }
+          }
+        }
+        .save-changes {
+          margin: 10px;
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+}

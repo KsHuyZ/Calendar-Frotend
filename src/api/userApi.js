@@ -102,4 +102,21 @@ export const userApi = {
     const res = await axios.get("/auth/authorize");
     return res.data;
   },
+  changePassword: async (id, password, newPassword) => {
+    try {
+      const res = await axios.post("/auth/change-password", {
+        id,
+        password,
+        newPassword,
+      });
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
+  },
+  forgotPassword: async (id) => {
+    const res = await axios.get(`/auth/forgot-password/${id}`);
+    return res.data
+  },
 };

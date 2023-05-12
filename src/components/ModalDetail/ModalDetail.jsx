@@ -37,6 +37,21 @@ const ModalDetail = ({ close, event, dele, show }) => {
     navigate(`/video-chat/${_id}`)
   }
 
+  const handleShowDate = (start, end) => {
+    const dateStart = new Date(start)
+    const dateEnd = new Date(end)
+    const startTime = dateStart.getHours() + ':' + dateStart.getMinutes();
+    const endTime = dateEnd.getHours() + ':' + dateEnd.getMinutes();
+    if (dateStart.getDate() === dateEnd.getDate() && dateStart.getMonth() === dateEnd.getMonth()) {
+      return `${dayjs(start).format("DD/MM/YYYY")} ${startTime} - ${endTime}`
+    }
+    if (dayjs(start).isSame(dayjs(end).subtract(1, 'day'))) {
+      return dayjs(start).format("DD/MM/YYYY")
+    } else {
+      return `${dayjs(start).format("DD/MM/YYYY")} - ${dayjs(end).format("DD/MM/YYYY")}`
+    }
+  }
+
   return (
     <div className={`background ${show ? "show" : ""}`} >
       <div className="map">
@@ -69,7 +84,7 @@ const ModalDetail = ({ close, event, dele, show }) => {
             </div>
             <div className="right-side title-day">
               <div className="title">{title}</div>
-              <div className="day">{dayjs(start).isSame(dayjs(end).subtract(1, 'day')) ? dayjs(start).format("DD/MM/YYYY") : `${dayjs(start).format("DD/MM/YYYY")} - ${dayjs(end).format("DD/MM/YYYY")} `}</div>
+              <div className="day">{handleShowDate(start, end)}</div>
             </div>
           </div>
           <div className="row description">
