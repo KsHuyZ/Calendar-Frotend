@@ -73,7 +73,7 @@ const Home = () => {
     const year = date.getFullYear();
     try {
       if (user._id) {
-        const res = await getEventbyCalendarId(id, year);
+        const res = await getEventbyCalendarId(id, year, user._id);
         if (res.success) {
           setPermission(true);
           setAllEvents(res.events);

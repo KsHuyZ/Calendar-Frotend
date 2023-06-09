@@ -154,7 +154,7 @@ const Header = ({ openSideBar, show }) => {
     <div className="menu-header">
       <div className="left-side">
         <div className="app-name">
-          <div class={`content ${show && "change"}`} onClick={openSideBar} >
+          <div className={`content ${show && "change"}`} onClick={openSideBar} >
             <div className="icon1"></div>
             <div className="icon2"></div>
             <div className="icon3"></div>

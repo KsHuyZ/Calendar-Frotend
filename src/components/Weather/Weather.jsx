@@ -2,20 +2,24 @@ import React, { useState } from 'react'
 import weatherApi from '../../api/weatherApi';
 import { useEffect } from 'react';
 import "./weather.scss"
-import Slider from 'react-slick';
 
 function getCurrentLocation() {
     return new Promise(function (resolve, reject) {
+        console.log("Chạy nè")
         if (navigator.geolocation) {
+            console.log("Có nè")
             navigator.geolocation.getCurrentPosition(function (position) {
+                console.log("Đéo lỗi nè")
                 resolve({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude
                 });
             }, function (error) {
+                console.log("Lỗi nè")
                 reject(error);
             });
         } else {
+            console.log("navigator.geolocation đéo có")
             reject("Geolocation is not supported by this browser.");
         }
     });
@@ -67,6 +71,7 @@ const Weather = () => {
 
     const handleGetMyLocation = async () => {
         const location = await getCurrentLocation()
+        console.log("location: ", location)
         const res = await weatherApi(location.latitude, location.longitude);
         console.log("my loca", res)
         setWeather({
@@ -74,12 +79,10 @@ const Weather = () => {
             temperature: res.current.temp,
             description: res.current.weather[0].description
         })
-        // return { city: city.city, weather: res.current.weather[0].main };
-
-
     }
 
     useEffect(() => {
+        console.log("Weather components is loading")
         handleGetMyLocation()
     }, [])
 

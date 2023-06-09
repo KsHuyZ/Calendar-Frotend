@@ -23,9 +23,9 @@ export const eventApi = {
       return null;
     }
   },
-  getEventbyCalendarId: async (id, year) => {
+  getEventbyCalendarId: async (id, year, userId) => {
     try {
-      const res = await axios.get(`${eventRoute}/${id}/${year}`);
+      const res = await axios.get(`${eventRoute}/${id}/${userId}/${year}`);
       return res.data;
     } catch (error) {
       console.log(error);

@@ -8,16 +8,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 
-const dayColors = [
-  "#c6cbda",
-  "#fee1e8",
-  "#fed7c3",
-  "#f6eac2",
-  "#ecd5e3",
-  "#ffd8be",
-  "#eceae4",
-];
-
 const now = () => new Date();
 
 const App = () => {

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { FcCalendar } from "react-icons/fc"
-import { TbCalendarEvent, TbHome2, TbShare } from "react-icons/tb"
+import { TbCalendarEvent, TbHome2 } from "react-icons/tb"
 import { RiArrowDropDownFill } from "react-icons/ri"
 import "./side-bar.scss"
 import { useState } from 'react'
@@ -9,7 +9,6 @@ import { AuthContext } from '../../context/AuthProvider'
 import { Link, NavLink } from 'react-router-dom'
 import { AiOutlinePlusCircle } from "react-icons/ai"
 import ModalCreateCal from '../ModalCreateCal/ModalCreateCal'
-import { MdOutlineAttachMoney } from 'react-icons/md'
 import socket from '../../config/socket'
 
 const NAV__LINKS = [
@@ -18,23 +17,12 @@ const NAV__LINKS = [
     url: "/",
     icon: <TbHome2 />
   },
-  {
-    display: "Donate",
-    url: "/donate",
-    icon: <MdOutlineAttachMoney />
-  },
-  {
-    display: "Todo",
-    url: "/todo",
-    icon: <MdOutlineAttachMoney />
-  }
 ];
 
 
 
 const SideBar = ({ show, close }) => {
   let [scheduleClick, setScheduleClick] = useState(false)
-  // let scheduleClick = false
   const [calendars, setCalendars] = useState([])
   const { user } = useContext(AuthContext)
   const { getCalendarbyUserId } = userApi
@@ -95,8 +83,6 @@ const SideBar = ({ show, close }) => {
               </div>
             </NavLink>
           ))}
-
-
           <div className="dropdown-item" onClick={handleClick}>
             <div className={`item ${scheduleClick ? "active" : ""}`} >
               <div className="item-content">
@@ -126,14 +112,7 @@ const SideBar = ({ show, close }) => {
                 <AiOutlinePlusCircle /> <div> Add Calendar</div>
               </div>
             </div>
-
-
           </div>
-
-
-
-
-
         </div>
       </div>
 

@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import socket from '../../config/socket'
 import { AuthContext } from '../../context/AuthProvider'
-import { Map } from '../../services/goong'
 import Weather from '../../components/Weather/Weather'
 import { TextField } from '@mui/material'
 import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers'

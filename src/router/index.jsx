@@ -9,7 +9,6 @@ import SideBar from "../components/SideBar/SideBar";
 import Dashboard from "../pages/DashBoard/Dashboard";
 import { useState } from "react";
 import VideoChat from "../components/VideoChat/VideoChat";
-import Todo from "../pages/Todo/Todo";
 import Profile from "../pages/Profile/Profile";
 import ChangePassword from "../pages/ChangePassword/ChangePassword";
 const AuthLayout = () => {
@@ -107,10 +106,6 @@ export default createBrowserRouter([
               {
                 element: <Home />,
                 path: "/:id/:year/:month/:day",
-              },
-              {
-                element: <Todo />,
-                path: "/todo",
               },
               {
                 element: <SettingsLayout />,
