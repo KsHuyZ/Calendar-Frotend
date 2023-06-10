@@ -69,8 +69,6 @@ const App = () => {
       const filtered = prevEvents.filter((it) => it.id !== event.id);
       return [...filtered, updatedEvent];
     });
-
-    // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   };
 
   const resizeEvent = ({ event, start, end }) => {

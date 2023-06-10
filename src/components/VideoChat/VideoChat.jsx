@@ -10,7 +10,6 @@ export default function VideoChat() {
   return (
     <div>
       <h1 className="heading">Calendar Meeting</h1>
-      
         <VideoCall setInCall={setInCall} channelName={channelName} />
       
     </div>
