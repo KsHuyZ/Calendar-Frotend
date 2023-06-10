@@ -10,23 +10,24 @@ const Videos = ({
     const [gridSpacing, setGridSpacing] = useState(12);
 
     useEffect(() => {
-        setGridSpacing(Math.max(Math.floor(12 / (users.length + 1)), 4));
+        setGridSpacing(12/(users.length+1));
     }, [users, tracks]);
 
     return (
-            <Grid item xs={gridSpacing}>
-                <Grid item xs={gridSpacing}>
-                    <AgoraVideoPlayer className='vid' videoTrack={tracks[1]} style={{ height: "100%", width: "100%" }} />
+            <Grid item xs={24} style={{height: "100%"}} container spacing={gridSpacing}>
+                <Grid item xs={gridSpacing} style={{height: "100%"}}>
+                    <AgoraVideoPlayer className='vid' videoTrack={tracks[1]} style={{ height: "100%", width:"100%"}} />
                 </Grid>
                 {users.length > 0 &&
                     users.map((user) => {
                         if (user.videoTrack) {
                             return (
-                                <Grid item xs={gridSpacing}>
+                                <Grid item xs={gridSpacing}  style={{height: "100%"}}>
                                     <AgoraVideoPlayer
                                         videoTrack={user.videoTrack}
                                         key={user.uid}
-                                        style={{ height: "100%", width: "100%" }}
+                                        className="vid"
+                                        style={{ height: "100%" }}
                                     />
                                 </Grid>
                             );

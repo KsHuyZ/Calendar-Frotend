@@ -61,13 +61,13 @@ export default function VideoCall({ setInCall, channelName }) {
   }, [channelName, client, ready, tracks]);
 
   return (
-    <Grid container direction="column" style={{ height: "100%" }}>
+    <Grid container direction="column" style={{ height: "100%", width:"100%", justifyContent:"space-between" }}>
       <Grid item style={{ height: "5%" }}>
         {ready && tracks && (
           <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
         )}
       </Grid>
-      <Grid item style={{ height: "95%" }}>
+      <Grid item style={{ height: "90%", width:"100%" }}>
         {start && tracks && <Videos users={users} tracks={tracks} />}
       </Grid>
     </Grid>
